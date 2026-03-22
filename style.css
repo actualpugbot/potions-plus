@@ -361,8 +361,8 @@ html[data-theme="light"] .theme-toggle-thumb {
 }
 
 .recipe-flow-diagram {
-    --ui-art-width: clamp(280px, 52vw, 660px);
-    --ui-layout-scale: 0.94;
+    --ui-art-width: clamp(260px, 47vw, 600px);
+    --ui-layout-scale: 0.88;
     --ui-main-base-left: 30.24%;
     --ui-main-base-width: 39.44%;
     --ui-bubbles-base-left: 0%;
@@ -371,9 +371,9 @@ html[data-theme="light"] .theme-toggle-thumb {
     --ui-arrow-base-width: 22.25%;
     --ui-chrome-opacity: 0.84;
     --ui-chrome-filter: brightness(1.34) contrast(1.12) saturate(1.06) drop-shadow(0 0 16px rgba(205, 227, 255, 0.48));
-    --ui-slot-content-width: min(82%, 298px);
-    --ui-slot-icon-size: clamp(42px, 6.8vw, 66px);
-    --ui-slot-label-size: clamp(0.92rem, 1.55vw, 1.14rem);
+    --ui-slot-content-width: min(82%, 282px);
+    --ui-slot-icon-size: clamp(38px, 6.2vw, 60px);
+    --ui-slot-label-size: clamp(0.88rem, 1.45vw, 1.08rem);
     --ui-top-slot-lift: clamp(0.48rem, 2vw, 1.02rem);
     --ui-bottom-slot-lift: clamp(0.2rem, 1.05vw, 0.5rem);
     --ui-main-offset-x: 0px;
@@ -387,16 +387,16 @@ html[data-theme="light"] .theme-toggle-thumb {
     --ui-arrow-scale: 1;
     --ui-top-slot-offset-x: -1px;
     --ui-top-slot-offset-y: -64px;
-    --ui-top-slot-scale: 1.36;
+    --ui-top-slot-scale: 1.24;
     --ui-bottom-slot-offset-x: 0px;
     --ui-bottom-slot-offset-y: 30px;
-    --ui-bottom-slot-scale: 1.51;
+    --ui-bottom-slot-scale: 1.38;
     --ui-bottle-offset-x: 0px;
     --ui-bottle-offset-y: 0px;
-    --ui-bottle-scale: 1.36;
-    --ui-modifiers-offset-x: 180px;
+    --ui-bottle-scale: 1.24;
+    --ui-modifiers-offset-x: 168px;
     --ui-modifiers-offset-y: 0px;
-    --ui-modifiers-scale: 1.22;
+    --ui-modifiers-scale: 1.1;
     --ui-slot-offset-top: 1.25rem;
     --ui-stack-pad-top: clamp(2rem, 5vw, 3.1rem);
     --ui-stack-pad-bottom: clamp(0.8rem, 2.6vw, 1.65rem);

@@ -31,16 +31,16 @@ const LAYOUT_TUNER_DEFAULT_VALUES = {
     "--ui-arrow-scale": 1,
     "--ui-top-slot-offset-x": -1,
     "--ui-top-slot-offset-y": -64,
-    "--ui-top-slot-scale": 1.36,
+    "--ui-top-slot-scale": 1.24,
     "--ui-bottom-slot-offset-x": 0,
     "--ui-bottom-slot-offset-y": 30,
-    "--ui-bottom-slot-scale": 1.51,
+    "--ui-bottom-slot-scale": 1.38,
     "--ui-bottle-offset-x": 0,
     "--ui-bottle-offset-y": 0,
-    "--ui-bottle-scale": 1.36,
-    "--ui-modifiers-offset-x": 180,
+    "--ui-bottle-scale": 1.24,
+    "--ui-modifiers-offset-x": 168,
     "--ui-modifiers-offset-y": 0,
-    "--ui-modifiers-scale": 1.22,
+    "--ui-modifiers-scale": 1.1,
 };
 
 const ASSETS = {
