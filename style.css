@@ -1,0 +1,642 @@
+:root {
+    --font-ui: "Oxanium", "Segoe UI", sans-serif;
+    --font-pixel: "Silkscreen", "Courier New", monospace;
+    --radius: 18px;
+    --radius-sm: 13px;
+    --bg-a: #121a29;
+    --bg-b: #161f31;
+    --bg-c: #0f1625;
+    --panel-a: #1a2436;
+    --panel-b: #161f2f;
+    --panel-soft-a: #243047;
+    --panel-soft-b: #202a3d;
+    --line: #3e4d67;
+    --line-strong: #6f88b1;
+    --text: #eef5ff;
+    --muted: #9aa9c2;
+    --accent: #8ec0ff;
+    --accent-soft: rgba(142, 192, 255, 0.2);
+    --panel-glow: 0 18px 38px rgba(4, 9, 18, 0.42);
+    --edge-glow: 0 0 0 1px rgba(165, 193, 236, 0.08), 0 0 24px rgba(82, 113, 163, 0.22);
+    --theme-toggle-track: linear-gradient(180deg, #3c4f6a 0%, #283950 100%);
+    --theme-toggle-track-border: #59759a;
+    --theme-toggle-thumb: #edf4ff;
+}
+
+html[data-theme="light"] {
+    --bg-a: #dce8f5;
+    --bg-b: #d5e2f0;
+    --bg-c: #eaf1f8;
+    --panel-a: #fbfdff;
+    --panel-b: #f3f7fc;
+    --panel-soft-a: #f8fbff;
+    --panel-soft-b: #ebf1f8;
+    --line: #bfd0e6;
+    --line-strong: #7f9ec9;
+    --text: #1f3148;
+    --muted: #5f7492;
+    --accent: #2f72c8;
+    --accent-soft: rgba(47, 114, 200, 0.12);
+    --panel-glow: 0 18px 34px rgba(41, 68, 102, 0.13);
+    --edge-glow: 0 0 0 1px rgba(87, 122, 172, 0.1), 0 0 20px rgba(86, 122, 176, 0.12);
+    --theme-toggle-track: linear-gradient(180deg, #f4ca67 0%, #e7b34a 100%);
+    --theme-toggle-track-border: #ca9a42;
+    --theme-toggle-thumb: #ffffff;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    min-height: 100%;
+}
+
+body {
+    font-family: var(--font-ui);
+    color: var(--text);
+    background:
+        radial-gradient(circle at 12% 6%, rgba(103, 136, 183, 0.2) 0%, rgba(103, 136, 183, 0) 36%),
+        radial-gradient(circle at 88% -12%, rgba(89, 121, 167, 0.24) 0%, rgba(89, 121, 167, 0) 44%),
+        linear-gradient(165deg, var(--bg-a) 0%, var(--bg-b) 50%, var(--bg-c) 100%);
+    background-attachment: fixed;
+}
+
+.potion-guide-page {
+    width: min(1400px, calc(100% - 2.2rem));
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 1.1rem 0 1.6rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.page-heading h1 {
+    margin: 0;
+    font-family: var(--font-pixel);
+    font-size: clamp(1.45rem, 2.4vw, 2.2rem);
+    line-height: 1.16;
+    letter-spacing: 0.04em;
+    text-shadow: 0 3px 0 rgba(0, 0, 0, 0.34);
+}
+
+.subtitle {
+    margin: 0.35rem 0 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+}
+
+.theme-toggle {
+    border: 0;
+    background: transparent;
+    color: var(--text);
+    padding: 0;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.theme-toggle-track {
+    width: 3.45rem;
+    height: 1.78rem;
+    border-radius: 999px;
+    border: 1px solid var(--theme-toggle-track-border);
+    background: var(--theme-toggle-track);
+    position: relative;
+    box-shadow: var(--panel-glow);
+}
+
+.theme-toggle-thumb {
+    position: absolute;
+    top: 50%;
+    left: 0.18rem;
+    width: 1.32rem;
+    height: 1.32rem;
+    border-radius: 50%;
+    background: var(--theme-toggle-thumb);
+    transform: translateY(-50%);
+    transition: transform 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
+}
+
+html[data-theme="light"] .theme-toggle-thumb {
+    transform: translate(1.72rem, -50%);
+}
+
+.app-layout {
+    flex: 1;
+    display: grid;
+    grid-template-columns: minmax(288px, 360px) minmax(0, 1fr);
+    gap: 1rem;
+}
+
+.panel {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: linear-gradient(170deg, var(--panel-a) 0%, var(--panel-b) 82%);
+    box-shadow: var(--panel-glow), var(--edge-glow);
+    backdrop-filter: blur(1px);
+    animation: rise-in 340ms ease both;
+}
+
+.potion-sidebar {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.72rem;
+}
+
+.section-title {
+    margin: 0;
+    font-size: 1.1rem;
+    letter-spacing: 0.03em;
+    font-weight: 600;
+}
+
+.potion-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.56rem;
+    min-height: 0;
+}
+
+.potion-list-item {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    width: 100%;
+    background: linear-gradient(160deg, var(--panel-soft-a) 0%, var(--panel-soft-b) 100%);
+    color: var(--text);
+    padding: 0.56rem 0.64rem;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    animation: rise-in 300ms ease both;
+    animation-delay: var(--entry-delay, 0ms);
+}
+
+.potion-list-item:hover {
+    transform: translateY(-1px);
+    border-color: #7e9fcf;
+}
+
+.potion-list-item.is-selected {
+    border-color: #9dc7ff;
+    background: linear-gradient(155deg, rgba(65, 88, 124, 0.95) 0%, rgba(38, 55, 81, 0.94) 100%);
+    box-shadow: 0 0 0 1px rgba(163, 202, 255, 0.35), 0 0 20px rgba(115, 159, 226, 0.3);
+}
+
+.potion-list-item:focus-visible,
+.theme-toggle:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.potion-thumb-wrap {
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    border: 1px solid rgba(146, 177, 221, 0.3);
+    background: linear-gradient(160deg, rgba(18, 28, 44, 0.95), rgba(35, 50, 73, 0.92));
+    display: grid;
+    place-items: center;
+}
+
+.potion-thumb {
+    width: 28px;
+    height: 36px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 7px rgba(124, 164, 226, 0.38));
+}
+
+.potion-list-text {
+    min-width: 0;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.62rem;
+}
+
+.potion-name {
+    font-size: 0.98rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.effect-icon-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.28rem;
+    flex-shrink: 0;
+}
+
+.effect-chip {
+    width: 24px;
+    height: 24px;
+    border-radius: 8px;
+    border: 1px solid rgba(150, 183, 229, 0.32);
+    background: rgba(18, 28, 43, 0.6);
+    display: grid;
+    place-items: center;
+}
+
+.effect-chip img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+}
+
+.recipe-panel {
+    padding: 1.05rem 1.2rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    min-height: 640px;
+    position: relative;
+    overflow: hidden;
+}
+
+.recipe-panel::before {
+    content: "";
+    position: absolute;
+    inset: -40% -20% auto;
+    height: 44%;
+    background: radial-gradient(circle, rgba(135, 170, 228, 0.16), rgba(135, 170, 228, 0));
+    pointer-events: none;
+}
+
+.recipe-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    margin-bottom: 0.9rem;
+    z-index: 1;
+}
+
+.recipe-title-icon-shell {
+    width: 84px;
+    height: 84px;
+    border-radius: 16px;
+    border: 1px solid rgba(154, 186, 231, 0.35);
+    background: linear-gradient(155deg, rgba(34, 47, 68, 0.96), rgba(22, 32, 48, 0.96));
+    display: grid;
+    place-items: center;
+    box-shadow: 0 0 18px rgba(102, 141, 204, 0.22);
+}
+
+.recipe-title-icon {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+}
+
+.recipe-title {
+    margin: 0;
+    font-size: clamp(1.4rem, 2.4vw, 2rem);
+    font-weight: 700;
+    letter-spacing: 0.03em;
+}
+
+.recipe-duration {
+    margin: 0.32rem 0 0;
+    color: var(--muted);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+}
+
+.recipe-flow-diagram {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    border: 1px solid rgba(144, 176, 219, 0.26);
+    border-radius: 16px;
+    padding: 1rem 1rem 1.15rem;
+    background: linear-gradient(160deg, rgba(30, 42, 61, 0.92) 0%, rgba(23, 33, 50, 0.9) 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 0.92rem;
+}
+
+.flow-stack {
+    width: min(360px, 100%);
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.62rem;
+}
+
+.recipe-node {
+    border: 1px solid rgba(137, 168, 210, 0.34);
+    border-radius: 14px;
+    background: linear-gradient(160deg, rgba(39, 53, 77, 0.96) 0%, rgba(29, 41, 61, 0.96) 100%);
+    min-height: 86px;
+    padding: 0.72rem 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.72rem;
+    box-shadow: 0 10px 20px rgba(4, 9, 19, 0.22);
+}
+
+.recipe-node-icon-shell,
+.final-potion-icon-shell {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    border: 1px solid rgba(147, 178, 221, 0.34);
+    background: rgba(15, 24, 38, 0.75);
+    display: grid;
+    place-items: center;
+}
+
+.recipe-node-icon {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+}
+
+.recipe-node-label {
+    font-size: 1.02rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.recipe-node-subtitle {
+    margin-top: 0.18rem;
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-weight: 500;
+}
+
+.icon-fallback {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: rgba(143, 178, 230, 0.22);
+    color: #d6e8ff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+}
+
+.flow-connector {
+    width: 2px;
+    height: 34px;
+    margin: 0 auto;
+    background: linear-gradient(180deg, rgba(190, 212, 243, 0.95), rgba(111, 142, 191, 0.7));
+}
+
+.flow-arrow-down {
+    position: relative;
+    width: 2px;
+    height: 38px;
+    margin: 0 auto;
+    background: linear-gradient(180deg, rgba(196, 218, 249, 0.98), rgba(113, 146, 196, 0.75));
+}
+
+.flow-arrow-down::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -11px;
+    transform: translateX(-50%);
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-top: 15px solid rgba(184, 210, 247, 0.96);
+}
+
+.modifier-lane {
+    margin-top: 0.35rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(220px, 1.2fr);
+    gap: 0.72rem;
+    align-items: center;
+}
+
+.recipe-modifier-row,
+.recipe-duration-chip,
+.final-potion-node {
+    border-radius: 12px;
+    min-height: 62px;
+    border: 1px solid rgba(130, 165, 213, 0.32);
+    background: linear-gradient(160deg, rgba(39, 53, 76, 0.95) 0%, rgba(29, 40, 61, 0.94) 100%);
+}
+
+.recipe-modifier-row {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.65rem 0.72rem;
+}
+
+.modifier-prefix {
+    width: 20px;
+    height: 20px;
+    border-radius: 999px;
+    border: 1px solid rgba(155, 190, 236, 0.42);
+    background: rgba(90, 127, 186, 0.27);
+    display: grid;
+    place-items: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.modifier-icon-shell {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    border: 1px solid rgba(144, 176, 219, 0.35);
+    background: rgba(14, 23, 36, 0.75);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+}
+
+.modifier-icon-shell img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.modifier-label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    min-width: 0;
+}
+
+.recipe-duration-chip {
+    display: grid;
+    place-items: center;
+    padding: 0.3rem 0.8rem;
+    color: var(--accent);
+    text-align: center;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.recipe-duration-chip.is-empty {
+    visibility: hidden;
+}
+
+.modifier-arrow-right {
+    width: 30px;
+    height: 2px;
+    background: rgba(180, 208, 248, 0.92);
+    position: relative;
+}
+
+.modifier-arrow-right::after {
+    content: "";
+    position: absolute;
+    right: -8px;
+    top: -5px;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 9px solid rgba(180, 208, 248, 0.95);
+}
+
+.final-potion-node {
+    display: flex;
+    align-items: center;
+    gap: 0.64rem;
+    padding: 0.66rem 0.78rem;
+    box-shadow: 0 0 0 1px rgba(167, 202, 253, 0.2), 0 0 18px rgba(123, 164, 223, 0.26);
+}
+
+.final-potion-icon {
+    width: 28px;
+    height: 36px;
+    object-fit: contain;
+}
+
+.final-potion-label {
+    font-size: 0.94rem;
+    font-weight: 700;
+    line-height: 1.28;
+    letter-spacing: 0.01em;
+}
+
+@keyframes rise-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 1180px) {
+    .potion-guide-page {
+        width: min(1240px, calc(100% - 1.4rem));
+    }
+
+    .modifier-lane {
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        grid-template-areas:
+            "first duration second"
+            ". arrow final";
+        row-gap: 0.65rem;
+    }
+
+    .modifier-lane > :nth-child(1) {
+        grid-area: first;
+    }
+
+    .modifier-lane > :nth-child(2) {
+        grid-area: duration;
+    }
+
+    .modifier-lane > :nth-child(3) {
+        grid-area: second;
+    }
+
+    .modifier-lane > :nth-child(4) {
+        grid-area: arrow;
+        justify-self: center;
+    }
+
+    .modifier-lane > :nth-child(5) {
+        grid-area: final;
+    }
+}
+
+@media (max-width: 940px) {
+    .app-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .recipe-panel {
+        min-height: 540px;
+    }
+}
+
+@media (max-width: 620px) {
+    .potion-guide-page {
+        width: calc(100% - 0.9rem);
+        padding-top: 0.76rem;
+    }
+
+    .page-header {
+        margin-bottom: 0.75rem;
+    }
+
+    .potion-sidebar {
+        padding: 0.78rem;
+    }
+
+    .recipe-panel {
+        padding: 0.85rem;
+    }
+
+    .recipe-title-icon-shell {
+        width: 72px;
+        height: 72px;
+    }
+
+    .recipe-title-icon {
+        width: 52px;
+        height: 52px;
+    }
+
+    .flow-stack {
+        width: 100%;
+    }
+
+    .modifier-lane {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "first"
+            "duration"
+            "second"
+            "arrow"
+            "final";
+    }
+}

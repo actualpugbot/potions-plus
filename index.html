@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Potion Guide</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;600;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="./style.css">
+        <script src="./script.js" defer></script>
+    </head>
+    <body>
+        <main id="potion-guide-page" class="potion-guide-page">
+            <header class="page-header">
+                <div class="page-heading">
+                    <h1>POTION GUIDE</h1>
+                    <p class="subtitle">Find the best potion recipes</p>
+                </div>
+
+                <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch to light mode" title="Switch to light mode">
+                    <span class="theme-toggle-track" aria-hidden="true">
+                        <span class="theme-toggle-thumb"></span>
+                    </span>
+                </button>
+            </header>
+
+            <section class="app-layout">
+                <aside class="panel potion-sidebar" aria-labelledby="sidebar-title">
+                    <h2 id="sidebar-title" class="section-title">Select Potion</h2>
+                    <div id="potion-list" class="potion-list"></div>
+                </aside>
+
+                <section id="recipe-panel" class="panel recipe-panel" aria-live="polite"></section>
+            </section>
+        </main>
+    </body>
+</html>
