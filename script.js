@@ -7,20 +7,42 @@ const ASSETS = {
         regeneration: "./effect_icons/effect_regeneration.png",
         strength: "./effect_icons/effect_strength.png",
         swiftness: "./effect_icons/effect_speed.png",
+        leaping: "./effect_icons/effect_leaping.png",
+        slowness: "./effect_icons/effect_slowness.png",
+        weakness: "./effect_icons/effect_weakness.png",
+        poison: "./effect_icons/effect_poison.png",
+        harming: "./effect_icons/effect_harming.png",
         healing: "./effect_icons/effect_healing.png",
         nightVision: "./effect_icons/effect_night_vision.png",
         waterBreathing: "./effect_icons/effect_water_breathing.png",
         invisibility: "./effect_icons/effect_invisibility.png",
+        turtleMaster: "./effect_icons/effect_resistance.png",
+        slowFalling: "./effect_icons/effect_feather_falling.png",
+        oozing: "./effect_icons/effect_oozing.png",
+        weaving: "./effect_icons/effect_weaving.png",
+        windCharging: "./effect_icons/effect_wind_charged.png",
+        infestation: "./effect_icons/effect_infestation.png",
     },
     effectsOutlined: {
         fireResistance: "./effect_icons/effect_fire_resistance_outlined.png",
         regeneration: "./effect_icons/effect_regeneration_outlined.png",
         strength: "./effect_icons/effect_strength_outlined.png",
         swiftness: "./effect_icons/effect_speed_outlined.png",
+        leaping: "./effect_icons/effect_leaping_outlined.png",
+        slowness: "./effect_icons/effect_slowness_outlined.png",
+        weakness: "./effect_icons/effect_weakness_outlined.png",
+        poison: "./effect_icons/effect_poison_outlined.png",
+        harming: "./effect_icons/effect_harming_outlined.png",
         healing: "./effect_icons/effect_healing_outlined.png",
         nightVision: "./effect_icons/effect_night_vision_outlined.png",
         waterBreathing: "./effect_icons/effect_water_breathing_outlined.png",
         invisibility: "./effect_icons/effect_invisibility_outlined.png",
+        turtleMaster: "./effect_icons/effect_resistance_outlined.png",
+        slowFalling: "./effect_icons/effect_feather_falling_outlined.png",
+        oozing: "./effect_icons/effect_oozing_outlined.png",
+        weaving: "./effect_icons/effect_weaving_outlined.png",
+        windCharging: "./effect_icons/effect_wind_charged_outlined.png",
+        infestation: "./effect_icons/effect_infestation_outlined.png",
     },
     ingredients: {
         magmaCream: "./ingredients/magma_cream_outlined.png",
@@ -33,6 +55,14 @@ const ASSETS = {
         goldenCarrot: "./ingredients/golden_carrot_outlined.png",
         pufferfish: "./ingredients/pufferfish_outlined.png",
         fermentedSpiderEye: "./ingredients/fermented_spider_eye_outlined.png",
+        rabbitsFoot: "./ingredients/rabbits_foot_outlined.png",
+        spiderEye: "./ingredients/spider_eye_outlined.png",
+        phantomMembrane: "./ingredients/phantom_membrane_outlined.png",
+        turtleShell: "./ingredients/turtle_shell_outlined.png",
+        slimeBlock: "./ingredients/slime_block_outlined.png",
+        cobweb: "./ingredients/cobweb_outlined.png",
+        breezeRod: "./ingredients/breeze_rod_outlined.png",
+        stone: "./ingredients/stone_outlined.png",
     },
     potions: {
         waterBottle: "./potion_bottles/water_bottle_outlined.png",
@@ -40,20 +70,42 @@ const ASSETS = {
         regeneration: "./potion_bottles/potion_of_regeneration_outlined.png",
         strength: "./potion_bottles/potion_of_strength_outlined.png",
         swiftness: "./potion_bottles/potion_of_swiftness_outlined.png",
+        leaping: "./potion_bottles/potion_of_leaping_outlined.png",
+        slowness: "./potion_bottles/potion_of_slowness_outlined.png",
+        weakness: "./potion_bottles/potion_of_weakness_outlined.png",
+        poison: "./potion_bottles/potion_of_poison_outlined.png",
+        harming: "./potion_bottles/potion_of_harming_outlined.png",
         healing: "./potion_bottles/potion_of_healing_outlined.png",
         nightVision: "./potion_bottles/potion_of_night_vision_outlined.png",
         waterBreathing: "./potion_bottles/potion_of_water_breathing_outlined.png",
         invisibility: "./potion_bottles/potion_of_invisibility_outlined.png",
+        turtleMaster: "./potion_bottles/potion_of_the_turtle_master_outlined.png",
+        slowFalling: "./potion_bottles/potion_of_slow_falling_outlined.png",
+        oozing: "./potion_bottles/potion_of_oozing_outlined.png",
+        weaving: "./potion_bottles/potion_of_weaving_outlined.png",
+        windCharging: "./potion_bottles/potion_of_wind_charging_outlined.png",
+        infestation: "./potion_bottles/potion_of_infestation_outlined.png",
     },
     splashPotions: {
         fireResistance: "./potion_bottles/splash_potion_of_fire_resistance.png",
         regeneration: "./potion_bottles/splash_potion_of_regeneration_outlined.png",
         strength: "./potion_bottles/splash_potion_of_strength_outlined.png",
         swiftness: "./potion_bottles/splash_potion_of_switfness_outlined.png",
+        leaping: "./potion_bottles/splash_potion_of_leaping_outlined.png",
+        slowness: "./potion_bottles/splash_potion_of_slowness_outlined.png",
+        weakness: "./potion_bottles/splash_potion_of_weakness_outlined.png",
+        poison: "./potion_bottles/splash_potion_of_poison_outlined.png",
+        harming: "./potion_bottles/splash_potion_of_harming_outlined.png",
         healing: "./potion_bottles/splash_potion_of_healing_outlined.png",
         nightVision: "./potion_bottles/splash_potion_of_night_vision_outlined.png",
         waterBreathing: "./potion_bottles/splash_potion_of_water_breathing_outlined.png",
         invisibility: "./potion_bottles/splash_potion_of_invisibility_outlined.png",
+        turtleMaster: "./potion_bottles/splash_potion_of_the_turtle_master_outlined.png",
+        slowFalling: "./potion_bottles/splash_potion_of_slow_falling_outlined.png",
+        oozing: "./potion_bottles/splash_potion_of_oozing_outlined.png",
+        weaving: "./potion_bottles/splash_potion_of_weaving_outlined.png",
+        windCharging: "./potion_bottles/splash_potion_of_wind_charging_outlined.png",
+        infestation: "./potion_bottles/splash_potion_of_infestation_outlined.png",
     },
 };
 
@@ -62,8 +114,7 @@ const POTION_RECIPES = [
         id: "fire-resistance",
         name: "Fire Resistance",
         duration: "3:00",
-        sidebarPotionIcon: ASSETS.potions.fireResistance,
-        effectIcons: [ASSETS.effects.fireResistance],
+        navIcon: ASSETS.effects.fireResistance,
         titleIcon: ASSETS.effectsOutlined.fireResistance,
         flow: {
             ingredient: { name: "Magma Cream", icon: ASSETS.ingredients.magmaCream },
@@ -76,11 +127,26 @@ const POTION_RECIPES = [
         },
     },
     {
+        id: "harming",
+        name: "Harming",
+        duration: "Instant",
+        navIcon: ASSETS.effects.harming,
+        titleIcon: ASSETS.effectsOutlined.harming,
+        flow: {
+            ingredient: { name: "Fermented Spider Eye", icon: ASSETS.ingredients.fermentedSpiderEye },
+            basePotion: { name: "Instant Health Potion", icon: ASSETS.potions.healing },
+            modifiers: [
+                { label: "Glowstone Dust", icon: ASSETS.ingredients.glowstoneDust, detail: "Instant Damage II" },
+                { label: "Gunpowder", icon: ASSETS.ingredients.gunpowder, detail: "" },
+            ],
+            finalPotion: { label: "Splash Potion of Harming", icon: ASSETS.splashPotions.harming },
+        },
+    },
+    {
         id: "regeneration",
         name: "Regeneration",
         duration: "0:45",
-        sidebarPotionIcon: ASSETS.potions.regeneration,
-        effectIcons: [ASSETS.effects.regeneration],
+        navIcon: ASSETS.effects.regeneration,
         titleIcon: ASSETS.effectsOutlined.regeneration,
         flow: {
             ingredient: { name: "Ghast Tear", icon: ASSETS.ingredients.ghastTear },
@@ -96,8 +162,7 @@ const POTION_RECIPES = [
         id: "strength",
         name: "Strength",
         duration: "3:00",
-        sidebarPotionIcon: ASSETS.potions.strength,
-        effectIcons: [ASSETS.effects.strength],
+        navIcon: ASSETS.effects.strength,
         titleIcon: ASSETS.effectsOutlined.strength,
         flow: {
             ingredient: { name: "Blaze Powder", icon: "" },
@@ -113,8 +178,7 @@ const POTION_RECIPES = [
         id: "swiftness",
         name: "Swiftness",
         duration: "3:00",
-        sidebarPotionIcon: ASSETS.potions.swiftness,
-        effectIcons: [ASSETS.effects.swiftness],
+        navIcon: ASSETS.effects.swiftness,
         titleIcon: ASSETS.effectsOutlined.swiftness,
         flow: {
             ingredient: { name: "Sugar", icon: ASSETS.ingredients.sugar },
@@ -127,11 +191,74 @@ const POTION_RECIPES = [
         },
     },
     {
+        id: "leaping",
+        name: "Leaping",
+        duration: "3:00",
+        navIcon: ASSETS.effects.leaping,
+        titleIcon: ASSETS.effectsOutlined.leaping,
+        flow: {
+            ingredient: { name: "Rabbit's Foot", icon: ASSETS.ingredients.rabbitsFoot },
+            basePotion: { name: "Awkward Potion", icon: ASSETS.potions.waterBottle },
+            modifiers: [
+                { label: "Redstone Dust", icon: ASSETS.ingredients.redstoneDust, detail: "+5:00 [8:00 total]" },
+                { label: "Gunpowder", icon: ASSETS.ingredients.gunpowder, detail: "" },
+            ],
+            finalPotion: { label: "Splash Potion of Leaping", icon: ASSETS.splashPotions.leaping },
+        },
+    },
+    {
+        id: "slowness",
+        name: "Slowness",
+        duration: "1:30",
+        navIcon: ASSETS.effects.slowness,
+        titleIcon: ASSETS.effectsOutlined.slowness,
+        flow: {
+            ingredient: { name: "Fermented Spider Eye", icon: ASSETS.ingredients.fermentedSpiderEye },
+            basePotion: { name: "Potion of Swiftness", icon: ASSETS.potions.swiftness },
+            modifiers: [
+                { label: "Redstone Dust", icon: ASSETS.ingredients.redstoneDust, detail: "+2:30 [4:00 total]" },
+                { label: "Gunpowder", icon: ASSETS.ingredients.gunpowder, detail: "" },
+            ],
+            finalPotion: { label: "Splash Potion of Slowness", icon: ASSETS.splashPotions.slowness },
+        },
+    },
+    {
+        id: "weakness",
+        name: "Weakness",
+        duration: "1:30",
+        navIcon: ASSETS.effects.weakness,
+        titleIcon: ASSETS.effectsOutlined.weakness,
+        flow: {
+            ingredient: { name: "Fermented Spider Eye", icon: ASSETS.ingredients.fermentedSpiderEye },
+            basePotion: { name: "Water Bottle", icon: ASSETS.potions.waterBottle },
+            modifiers: [
+                { label: "Redstone Dust", icon: ASSETS.ingredients.redstoneDust, detail: "+2:30 [4:00 total]" },
+                { label: "Gunpowder", icon: ASSETS.ingredients.gunpowder, detail: "" },
+            ],
+            finalPotion: { label: "Splash Potion of Weakness", icon: ASSETS.splashPotions.weakness },
+        },
+    },
+    {
+        id: "poison",
+        name: "Poison",
+        duration: "0:45",
+        navIcon: ASSETS.effects.poison,
+        titleIcon: ASSETS.effectsOutlined.poison,
+        flow: {
+            ingredient: { name: "Spider Eye", icon: ASSETS.ingredients.spiderEye },
+            basePotion: { name: "Awkward Potion", icon: ASSETS.potions.waterBottle },
+            modifiers: [
+                { label: "Redstone Dust", icon: ASSETS.ingredients.redstoneDust, detail: "+1:30 [2:15 total]" },
+                { label: "Gunpowder", icon: ASSETS.ingredients.gunpowder, detail: "" },
+            ],
+            finalPotion: { label: "Splash Potion of Poison", icon: ASSETS.splashPotions.poison },
+        },
+    },
+    {
         id: "healing",
         name: "Healing",
         duration: "Instant",
-        sidebarPotionIcon: ASSETS.potions.healing,
-        effectIcons: [ASSETS.effects.healing],
+        navIcon: ASSETS.effects.healing,
         titleIcon: ASSETS.effectsOutlined.healing,
         flow: {
             ingredient: { name: "Glistering Watermelon", icon: ASSETS.ingredients.glisteringWatermelon },
@@ -147,8 +274,7 @@ const POTION_RECIPES = [
         id: "night-vision",
         name: "Night Vision",
         duration: "3:00",
-        sidebarPotionIcon: ASSETS.potions.nightVision,
-        effectIcons: [ASSETS.effects.nightVision],
+        navIcon: ASSETS.effects.nightVision,
         titleIcon: ASSETS.effectsOutlined.nightVision,
         flow: {
             ingredient: { name: "Golden Carrot", icon: ASSETS.ingredients.goldenCarrot },
@@ -164,8 +290,7 @@ const POTION_RECIPES = [
         id: "water-breathing",
         name: "Water Breathing",
         duration: "3:00",
-        sidebarPotionIcon: ASSETS.potions.waterBreathing,
-        effectIcons: [ASSETS.effects.waterBreathing],
+        navIcon: ASSETS.effects.waterBreathing,
         titleIcon: ASSETS.effectsOutlined.waterBreathing,
         flow: {
             ingredient: { name: "Pufferfish", icon: ASSETS.ingredients.pufferfish },
@@ -181,8 +306,7 @@ const POTION_RECIPES = [
         id: "invisibility",
         name: "Invisibility",
         duration: "3:00",
-        sidebarPotionIcon: ASSETS.potions.invisibility,
-        effectIcons: [ASSETS.effects.invisibility],
+        navIcon: ASSETS.effects.invisibility,
         titleIcon: ASSETS.effectsOutlined.invisibility,
         flow: {
             ingredient: { name: "Fermented Spider Eye", icon: ASSETS.ingredients.fermentedSpiderEye },
@@ -194,13 +318,113 @@ const POTION_RECIPES = [
             finalPotion: { label: "Splash Potion of Invisibility", icon: ASSETS.splashPotions.invisibility },
         },
     },
+    {
+        id: "turtle-master",
+        name: "Turtle Master",
+        duration: "0:20",
+        navIcon: ASSETS.effects.turtleMaster,
+        titleIcon: ASSETS.effectsOutlined.turtleMaster,
+        flow: {
+            ingredient: { name: "Turtle Shell", icon: ASSETS.ingredients.turtleShell },
+            basePotion: { name: "Awkward Potion", icon: ASSETS.potions.waterBottle },
+            modifiers: [
+                { label: "Redstone Dust", icon: ASSETS.ingredients.redstoneDust, detail: "+0:20 [0:40 total]" },
+                { label: "Gunpowder", icon: ASSETS.ingredients.gunpowder, detail: "" },
+            ],
+            finalPotion: { label: "Splash Potion of the Turtle Master", icon: ASSETS.splashPotions.turtleMaster },
+        },
+    },
+    {
+        id: "slow-falling",
+        name: "Slow Falling",
+        duration: "1:30",
+        navIcon: ASSETS.effects.slowFalling,
+        titleIcon: ASSETS.effectsOutlined.slowFalling,
+        flow: {
+            ingredient: { name: "Phantom Membrane", icon: ASSETS.ingredients.phantomMembrane },
+            basePotion: { name: "Awkward Potion", icon: ASSETS.potions.waterBottle },
+            modifiers: [
+                { label: "Redstone Dust", icon: ASSETS.ingredients.redstoneDust, detail: "+2:30 [4:00 total]" },
+                { label: "Gunpowder", icon: ASSETS.ingredients.gunpowder, detail: "" },
+            ],
+            finalPotion: { label: "Splash Potion of Slow Falling", icon: ASSETS.splashPotions.slowFalling },
+        },
+    },
+    {
+        id: "oozing",
+        name: "Oozing",
+        duration: "3:00",
+        navIcon: ASSETS.effects.oozing,
+        titleIcon: ASSETS.effectsOutlined.oozing,
+        flow: {
+            ingredient: { name: "Slime Block", icon: ASSETS.ingredients.slimeBlock },
+            basePotion: { name: "Awkward Potion", icon: ASSETS.potions.waterBottle },
+            modifiers: [
+                { label: "Redstone Dust", icon: ASSETS.ingredients.redstoneDust, detail: "+5:00 [8:00 total]" },
+                { label: "Gunpowder", icon: ASSETS.ingredients.gunpowder, detail: "" },
+            ],
+            finalPotion: { label: "Splash Potion of Oozing", icon: ASSETS.splashPotions.oozing },
+        },
+    },
+    {
+        id: "weaving",
+        name: "Weaving",
+        duration: "3:00",
+        navIcon: ASSETS.effects.weaving,
+        titleIcon: ASSETS.effectsOutlined.weaving,
+        flow: {
+            ingredient: { name: "Cobweb", icon: ASSETS.ingredients.cobweb },
+            basePotion: { name: "Awkward Potion", icon: ASSETS.potions.waterBottle },
+            modifiers: [
+                { label: "Redstone Dust", icon: ASSETS.ingredients.redstoneDust, detail: "+5:00 [8:00 total]" },
+                { label: "Gunpowder", icon: ASSETS.ingredients.gunpowder, detail: "" },
+            ],
+            finalPotion: { label: "Splash Potion of Weaving", icon: ASSETS.splashPotions.weaving },
+        },
+    },
+    {
+        id: "wind-charging",
+        name: "Wind Charging",
+        duration: "3:00",
+        navIcon: ASSETS.effects.windCharging,
+        titleIcon: ASSETS.effectsOutlined.windCharging,
+        flow: {
+            ingredient: { name: "Breeze Rod", icon: ASSETS.ingredients.breezeRod },
+            basePotion: { name: "Awkward Potion", icon: ASSETS.potions.waterBottle },
+            modifiers: [
+                { label: "Redstone Dust", icon: ASSETS.ingredients.redstoneDust, detail: "+5:00 [8:00 total]" },
+                { label: "Gunpowder", icon: ASSETS.ingredients.gunpowder, detail: "" },
+            ],
+            finalPotion: { label: "Splash Potion of Wind Charging", icon: ASSETS.splashPotions.windCharging },
+        },
+    },
+    {
+        id: "infestation",
+        name: "Infestation",
+        duration: "3:00",
+        navIcon: ASSETS.effects.infestation,
+        titleIcon: ASSETS.effectsOutlined.infestation,
+        flow: {
+            ingredient: { name: "Stone", icon: ASSETS.ingredients.stone },
+            basePotion: { name: "Awkward Potion", icon: ASSETS.potions.waterBottle },
+            modifiers: [
+                { label: "Redstone Dust", icon: ASSETS.ingredients.redstoneDust, detail: "+5:00 [8:00 total]" },
+                { label: "Gunpowder", icon: ASSETS.ingredients.gunpowder, detail: "" },
+            ],
+            finalPotion: { label: "Splash Potion of Infestation", icon: ASSETS.splashPotions.infestation },
+        },
+    },
 ];
 
 const state = {
     selectedPotionId: DEFAULT_POTION_ID,
 };
 
+const preloadedAssetPaths = new Set();
+const pendingPreloadImages = new Map();
+
 document.addEventListener("DOMContentLoaded", () => {
+    preloadPotionAssets(POTION_RECIPES);
     initializeThemeToggle();
     PotionGuidePage();
 });
@@ -208,6 +432,46 @@ document.addEventListener("DOMContentLoaded", () => {
 function PotionGuidePage() {
     PotionSidebar();
     PotionRecipePanel(getSelectedPotion());
+}
+
+function preloadPotionAssets(recipes) {
+    const assetPaths = collectPotionAssetPaths(recipes);
+    assetPaths.forEach(preloadAssetImage);
+}
+
+function collectPotionAssetPaths(recipes) {
+    const paths = new Set();
+    recipes.forEach((potion) => {
+        addAssetPath(paths, potion.navIcon);
+        addAssetPath(paths, potion.titleIcon);
+        addAssetPath(paths, potion.flow?.ingredient?.icon);
+        addAssetPath(paths, potion.flow?.basePotion?.icon);
+        addAssetPath(paths, potion.flow?.finalPotion?.icon);
+        potion.flow?.modifiers?.forEach((modifier) => addAssetPath(paths, modifier.icon));
+    });
+    return paths;
+}
+
+function addAssetPath(paths, path) {
+    if (!path) {
+        return;
+    }
+    paths.add(path);
+}
+
+function preloadAssetImage(path) {
+    if (preloadedAssetPaths.has(path)) {
+        return;
+    }
+
+    preloadedAssetPaths.add(path);
+    const image = new Image();
+    image.decoding = "async";
+    image.onload = image.onerror = () => {
+        pendingPreloadImages.delete(path);
+    };
+    image.src = path;
+    pendingPreloadImages.set(path, image);
 }
 
 function PotionSidebar() {
@@ -232,54 +496,22 @@ function PotionListItem(potion, isSelected, index) {
     button.setAttribute("aria-pressed", isSelected ? "true" : "false");
     button.style.setProperty("--entry-delay", `${index * 28}ms`);
 
-    const potionThumbWrap = document.createElement("span");
-    potionThumbWrap.className = "potion-thumb-wrap";
-
-    const potionThumb = document.createElement("img");
-    potionThumb.className = "potion-thumb";
-    potionThumb.src = potion.sidebarPotionIcon;
-    potionThumb.alt = `${potion.name} bottle icon`;
-    potionThumbWrap.append(potionThumb);
-
-    const textShell = document.createElement("span");
-    textShell.className = "potion-list-text";
+    const navIcon = document.createElement("img");
+    navIcon.className = "potion-nav-icon";
+    navIcon.src = potion.navIcon;
+    navIcon.alt = "";
+    navIcon.setAttribute("aria-hidden", "true");
 
     const name = document.createElement("span");
     name.className = "potion-name";
     name.textContent = potion.name;
-    textShell.append(name);
-
-    const effectIconRow = document.createElement("span");
-    effectIconRow.className = "effect-icon-row";
-    potion.effectIcons.forEach(effectIcon => {
-        effectIconRow.append(createEffectIcon(effectIcon));
-    });
-    textShell.append(effectIconRow);
-
-    button.append(potionThumbWrap, textShell);
+    button.append(navIcon, name);
 
     button.addEventListener("click", () => {
-        if (state.selectedPotionId === potion.id) {
-            return;
-        }
-        state.selectedPotionId = potion.id;
-        PotionGuidePage();
+        selectPotion(potion.id);
     });
 
     return button;
-}
-
-function createEffectIcon(iconPath) {
-    const chip = document.createElement("span");
-    chip.className = "effect-chip";
-
-    const img = document.createElement("img");
-    img.src = iconPath;
-    img.alt = "";
-    img.setAttribute("aria-hidden", "true");
-
-    chip.append(img);
-    return chip;
 }
 
 function PotionRecipePanel(potion) {
@@ -463,6 +695,31 @@ function createIconFallback(name) {
 
 function getSelectedPotion() {
     return POTION_RECIPES.find(potion => potion.id === state.selectedPotionId) || POTION_RECIPES[0];
+}
+
+function selectPotion(nextPotionId) {
+    if (state.selectedPotionId === nextPotionId) {
+        return;
+    }
+
+    const previousPotionId = state.selectedPotionId;
+    state.selectedPotionId = nextPotionId;
+    syncPotionListSelection(previousPotionId, nextPotionId);
+    PotionRecipePanel(getSelectedPotion());
+}
+
+function syncPotionListSelection(previousPotionId, nextPotionId) {
+    const previousButton = document.querySelector(`[data-potion-id="${previousPotionId}"]`);
+    if (previousButton) {
+        previousButton.classList.remove("is-selected");
+        previousButton.setAttribute("aria-pressed", "false");
+    }
+
+    const nextButton = document.querySelector(`[data-potion-id="${nextPotionId}"]`);
+    if (nextButton) {
+        nextButton.classList.add("is-selected");
+        nextButton.setAttribute("aria-pressed", "true");
+    }
 }
 
 function initializeThemeToggle() {
