@@ -45,6 +45,7 @@ const ASSETS = {
         infestation: "./effect_icons/effect_infestation_outlined.png",
     },
     ingredients: {
+        blazePowder: "./ingredients/blaze_powder_outlined.png",
         magmaCream: "./ingredients/magma_cream_outlined.png",
         redstoneDust: "./ingredients/redstone_dust_outlined.png",
         gunpowder: "./ingredients/gunpowder_outlined.png",
@@ -165,7 +166,7 @@ const POTION_RECIPES = [
         navIcon: ASSETS.effects.strength,
         titleIcon: ASSETS.effectsOutlined.strength,
         flow: {
-            ingredient: { name: "Blaze Powder", icon: "" },
+            ingredient: { name: "Blaze Powder", icon: ASSETS.ingredients.blazePowder },
             basePotion: { name: "Awkward Potion", icon: ASSETS.potions.waterBottle },
             modifiers: [
                 { label: "Redstone Dust", icon: ASSETS.ingredients.redstoneDust, detail: "+5:00 [8:00 total]" },
@@ -414,7 +415,7 @@ const POTION_RECIPES = [
             finalPotion: { label: "Splash Potion of Infestation", icon: ASSETS.splashPotions.infestation },
         },
     },
-];
+].sort((a, b) => a.name.localeCompare(b.name));
 
 const state = {
     selectedPotionId: DEFAULT_POTION_ID,
@@ -444,12 +445,25 @@ function collectPotionAssetPaths(recipes) {
     recipes.forEach((potion) => {
         addAssetPath(paths, potion.navIcon);
         addAssetPath(paths, potion.titleIcon);
+        addAssetPath(paths, getPotionBottleAsset(potion));
         addAssetPath(paths, potion.flow?.ingredient?.icon);
         addAssetPath(paths, potion.flow?.basePotion?.icon);
         addAssetPath(paths, potion.flow?.finalPotion?.icon);
         potion.flow?.modifiers?.forEach((modifier) => addAssetPath(paths, modifier.icon));
     });
     return paths;
+}
+
+function getPotionBottleAsset(potion) {
+    const potionKey = normalizePotionIdToAssetKey(potion?.id);
+    if (potionKey && ASSETS.potions[potionKey]) {
+        return ASSETS.potions[potionKey];
+    }
+    return ASSETS.potions.waterBottle;
+}
+
+function normalizePotionIdToAssetKey(id) {
+    return (id || "").replace(/-([a-z])/g, (_match, letter) => letter.toUpperCase());
 }
 
 function addAssetPath(paths, path) {
@@ -520,10 +534,7 @@ function PotionRecipePanel(potion) {
         return;
     }
 
-    panel.replaceChildren(
-        RecipeHeader(potion),
-        RecipeFlowDiagram(potion.flow)
-    );
+    panel.replaceChildren(RecipeFlowDiagram(potion));
 }
 
 function RecipeHeader(potion) {
@@ -540,6 +551,7 @@ function RecipeHeader(potion) {
     iconShell.append(icon);
 
     const textWrap = document.createElement("div");
+    textWrap.className = "recipe-title-block";
     const title = document.createElement("h2");
     title.className = "recipe-title";
     title.textContent = potion.name;
@@ -552,52 +564,63 @@ function RecipeHeader(potion) {
     return header;
 }
 
-function RecipeFlowDiagram(flow) {
+function RecipeFlowDiagram(potion) {
+    const flow = potion.flow;
     const section = document.createElement("section");
     section.className = "recipe-flow-diagram";
+
+    const titleHeader = RecipeHeader(potion);
+    titleHeader.classList.add("recipe-flow-header");
+
+    const layoutArt = document.createElement("div");
+    layoutArt.className = "flow-layout-art";
+
+    const layoutMain = document.createElement("img");
+    layoutMain.className = "flow-layout-main";
+    layoutMain.src = "./ui_elements/UI_main.png";
+    layoutMain.alt = "";
+    layoutMain.setAttribute("aria-hidden", "true");
+
+    const layoutBubbles = document.createElement("img");
+    layoutBubbles.className = "flow-layout-bubbles";
+    layoutBubbles.src = "./ui_elements/UI_bubbles.png";
+    layoutBubbles.alt = "";
+    layoutBubbles.setAttribute("aria-hidden", "true");
+
+    const layoutBottle = document.createElement("img");
+    layoutBottle.className = "flow-layout-bottle";
+    layoutBottle.src = getPotionBottleAsset(potion);
+    layoutBottle.alt = "";
+    layoutBottle.setAttribute("aria-hidden", "true");
+
+    const layoutArrow = document.createElement("img");
+    layoutArrow.className = "flow-layout-arrow";
+    layoutArrow.src = "./ui_elements/UI_arrow.png";
+    layoutArrow.alt = "";
+    layoutArrow.setAttribute("aria-hidden", "true");
 
     const stack = document.createElement("div");
     stack.className = "flow-stack";
     stack.append(
-        createRecipeNode(flow.ingredient, "Ingredient"),
-        createFlowConnector(),
-        createRecipeNode(flow.basePotion, "Base Potion")
+        createRecipeNode(flow.ingredient),
+        createRecipeNode(flow.basePotion)
     );
-
-    const arrowDown = document.createElement("div");
-    arrowDown.className = "flow-arrow-down";
-    arrowDown.setAttribute("aria-hidden", "true");
+    layoutArt.append(layoutBubbles, layoutBottle, layoutMain, layoutArrow, stack);
 
     const modifierLane = document.createElement("div");
     modifierLane.className = "modifier-lane";
 
-    const firstModifier = flow.modifiers[0];
-    const secondModifier = flow.modifiers[1];
-
-    modifierLane.append(RecipeModifierRow(firstModifier));
-
-    const durationChip = document.createElement("div");
-    durationChip.className = "recipe-duration-chip";
-    durationChip.textContent = firstModifier?.detail || "";
-    if (!firstModifier?.detail) {
-        durationChip.classList.add("is-empty");
-    }
-    modifierLane.append(durationChip);
-
-    modifierLane.append(RecipeModifierRow(secondModifier));
-
-    const arrowRight = document.createElement("div");
-    arrowRight.className = "modifier-arrow-right";
-    arrowRight.setAttribute("aria-hidden", "true");
-    modifierLane.append(arrowRight);
+    (flow.modifiers || []).forEach((modifier) => {
+        modifierLane.append(RecipeModifierRow(modifier));
+    });
 
     modifierLane.append(createFinalPotionNode(flow.finalPotion));
 
-    section.append(stack, arrowDown, modifierLane);
+    section.append(titleHeader, layoutArt, modifierLane);
     return section;
 }
 
-function createRecipeNode(nodeData, subtitleText) {
+function createRecipeNode(nodeData) {
     const node = document.createElement("article");
     node.className = "recipe-node";
 
@@ -618,20 +641,10 @@ function createRecipeNode(nodeData, subtitleText) {
     const label = document.createElement("div");
     label.className = "recipe-node-label";
     label.textContent = nodeData?.name || "";
-    const subtitle = document.createElement("div");
-    subtitle.className = "recipe-node-subtitle";
-    subtitle.textContent = subtitleText;
-    textWrap.append(label, subtitle);
+    textWrap.append(label);
 
     node.append(iconShell, textWrap);
     return node;
-}
-
-function createFlowConnector() {
-    const connector = document.createElement("div");
-    connector.className = "flow-connector";
-    connector.setAttribute("aria-hidden", "true");
-    return connector;
 }
 
 function RecipeModifierRow(modifier) {
@@ -653,11 +666,22 @@ function RecipeModifierRow(modifier) {
         iconShell.append(createIconFallback(modifier?.label || "?"));
     }
 
+    const text = document.createElement("span");
+    text.className = "modifier-text";
+
     const label = document.createElement("span");
     label.className = "modifier-label";
     label.textContent = modifier?.label || "";
+    text.append(label);
 
-    row.append(prefix, iconShell, label);
+    if (modifier?.detail) {
+        const detail = document.createElement("span");
+        detail.className = "modifier-detail";
+        detail.textContent = modifier.detail;
+        text.append(detail);
+    }
+
+    row.append(prefix, iconShell, text);
     return row;
 }
 
@@ -684,6 +708,14 @@ function createFinalPotionNode(finalPotion) {
 
     node.append(iconShell, label);
     return node;
+}
+
+function setFlowDelay(element, delayMs) {
+    if (!element) {
+        return;
+    }
+
+    element.style.setProperty("--flow-delay", `${delayMs}ms`);
 }
 
 function createIconFallback(name) {
