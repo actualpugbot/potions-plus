@@ -493,8 +493,22 @@ document.addEventListener("DOMContentLoaded", () => {
     preloadPotionAssets(POTION_RECIPES);
     initializeThemeToggle();
     PotionGuidePage();
-    initializeLayoutTuner();
+    if (shouldEnableLayoutTuner()) {
+        initializeLayoutTuner();
+    }
 });
+
+function shouldEnableLayoutTuner() {
+    try {
+        const value = new URLSearchParams(window.location.search).get("layoutTuner");
+        if (!value) {
+            return false;
+        }
+        return ["1", "true", "yes", "on"].includes(value.toLowerCase());
+    } catch (_error) {
+        return false;
+    }
+}
 
 function PotionGuidePage() {
     PotionSidebar();
