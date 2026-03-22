@@ -371,7 +371,32 @@ html[data-theme="light"] .theme-toggle-thumb {
     --ui-arrow-base-width: 22.25%;
     --ui-chrome-opacity: 0.84;
     --ui-chrome-filter: brightness(1.34) contrast(1.12) saturate(1.06) drop-shadow(0 0 16px rgba(205, 227, 255, 0.48));
-    --ui-slot-content-width: min(76%, 270px);
+    --ui-slot-content-width: min(82%, 298px);
+    --ui-slot-icon-size: clamp(42px, 6.8vw, 66px);
+    --ui-slot-label-size: clamp(0.92rem, 1.55vw, 1.14rem);
+    --ui-top-slot-lift: clamp(0.48rem, 2vw, 1.02rem);
+    --ui-bottom-slot-lift: clamp(0.2rem, 1.05vw, 0.5rem);
+    --ui-main-offset-x: 0px;
+    --ui-main-offset-y: 0px;
+    --ui-main-scale: 1;
+    --ui-bubbles-offset-x: 0px;
+    --ui-bubbles-offset-y: 0px;
+    --ui-bubbles-scale: 1;
+    --ui-arrow-offset-x: 0px;
+    --ui-arrow-offset-y: 0px;
+    --ui-arrow-scale: 1;
+    --ui-top-slot-offset-x: -1px;
+    --ui-top-slot-offset-y: -64px;
+    --ui-top-slot-scale: 1.36;
+    --ui-bottom-slot-offset-x: 0px;
+    --ui-bottom-slot-offset-y: 30px;
+    --ui-bottom-slot-scale: 1.51;
+    --ui-bottle-offset-x: 0px;
+    --ui-bottle-offset-y: 0px;
+    --ui-bottle-scale: 1.36;
+    --ui-modifiers-offset-x: 180px;
+    --ui-modifiers-offset-y: 0px;
+    --ui-modifiers-scale: 1.22;
     --ui-slot-offset-top: 1.25rem;
     --ui-stack-pad-top: clamp(2rem, 5vw, 3.1rem);
     --ui-stack-pad-bottom: clamp(0.8rem, 2.6vw, 1.65rem);
@@ -407,37 +432,46 @@ html[data-theme="light"] .theme-toggle-thumb {
 }
 
 .flow-layout-main {
-    top: 0;
-    left: calc(var(--ui-main-base-left) + ((var(--ui-main-base-width) * (1 - var(--ui-layout-scale))) / 2));
+    top: calc(0% + var(--ui-main-offset-y, 0px));
+    left: calc(var(--ui-main-base-left) + ((var(--ui-main-base-width) * (1 - var(--ui-layout-scale))) / 2) + var(--ui-main-offset-x, 0px));
     width: calc(var(--ui-main-base-width) * var(--ui-layout-scale));
+    scale: var(--ui-main-scale, 1);
+    transform-origin: center;
     opacity: var(--ui-chrome-opacity);
     filter: var(--ui-chrome-filter);
 }
 
 .flow-layout-bubbles {
-    top: 0;
-    left: calc(var(--ui-bubbles-base-left) + ((var(--ui-bubbles-base-width) * (1 - var(--ui-layout-scale))) / 2));
+    top: calc(0% + var(--ui-bubbles-offset-y, 0px));
+    left: calc(var(--ui-bubbles-base-left) + ((var(--ui-bubbles-base-width) * (1 - var(--ui-layout-scale))) / 2) + var(--ui-bubbles-offset-x, 0px));
     width: calc(var(--ui-bubbles-base-width) * var(--ui-layout-scale));
+    scale: var(--ui-bubbles-scale, 1);
+    transform-origin: center;
     opacity: var(--ui-chrome-opacity);
     filter: var(--ui-chrome-filter);
 }
 
 .flow-layout-arrow {
-    top: 4.7%;
-    left: calc(var(--ui-arrow-base-left) + ((var(--ui-arrow-base-width) * (1 - var(--ui-layout-scale))) / 2));
+    top: calc(4.7% + var(--ui-arrow-offset-y, 0px));
+    left: calc(var(--ui-arrow-base-left) + ((var(--ui-arrow-base-width) * (1 - var(--ui-layout-scale))) / 2) + var(--ui-arrow-offset-x, 0px));
     width: calc(var(--ui-arrow-base-width) * var(--ui-layout-scale));
+    scale: var(--ui-arrow-scale, 1);
+    transform-origin: center;
     opacity: var(--ui-chrome-opacity);
     filter: var(--ui-chrome-filter);
 }
 
 .flow-layout-bottle {
-    top: 53.8%;
+    top: calc(53.8% + var(--ui-bottle-offset-y, 0px));
     left: calc(
         var(--ui-bubbles-base-left)
         + ((var(--ui-bubbles-base-width) * (1 - var(--ui-layout-scale))) / 2)
         + ((var(--ui-bubbles-base-width) * var(--ui-layout-scale) - clamp(42px, 15.2%, 102px)) / 2)
+        + var(--ui-bottle-offset-x, 0px)
     );
     width: clamp(42px, 15.2%, 102px);
+    scale: var(--ui-bottle-scale, 1);
+    transform-origin: center;
     opacity: 0.88;
     filter: brightness(1.34) contrast(1.08) saturate(1.04) drop-shadow(0 0 10px rgba(194, 220, 255, 0.38));
 }
@@ -467,8 +501,8 @@ html[data-theme="light"] .flow-layout-bottle {
     grid-template-rows: repeat(2, minmax(0, 1fr));
     justify-items: center;
     align-items: center;
-    row-gap: clamp(0.45rem, 1.4vw, 0.95rem);
-    padding: var(--ui-stack-pad-top) 0 var(--ui-stack-pad-bottom);
+    row-gap: clamp(0.35rem, 1.2vw, 0.78rem);
+    padding: var(--ui-stack-pad-top) clamp(0.2rem, 1.1vw, 0.55rem) var(--ui-stack-pad-bottom);
     z-index: 1;
 }
 
@@ -484,8 +518,22 @@ html[data-theme="light"] .flow-layout-bottle {
     align-items: center;
     flex-direction: column;
     text-align: center;
-    gap: 0.46rem;
+    gap: 0.56rem;
     color: #eef5ff;
+}
+
+.flow-stack > .recipe-node:first-child {
+    margin-top: calc((-1 * var(--ui-top-slot-lift)) + var(--ui-top-slot-offset-y, 0px));
+    margin-left: var(--ui-top-slot-offset-x, 0px);
+    scale: var(--ui-top-slot-scale, 1);
+    transform-origin: center;
+}
+
+.flow-stack > .recipe-node:nth-child(2) {
+    margin-top: calc((-1 * var(--ui-bottom-slot-lift)) + var(--ui-bottom-slot-offset-y, 0px));
+    margin-left: var(--ui-bottom-slot-offset-x, 0px);
+    scale: var(--ui-bottom-slot-scale, 1);
+    transform-origin: center;
 }
 
 .flow-stack .recipe-node > div:last-child {
@@ -502,8 +550,8 @@ html[data-theme="light"] .flow-layout-bottle {
 }
 
 .flow-stack .recipe-node-icon {
-    width: clamp(36px, 6vw, 56px);
-    height: clamp(36px, 6vw, 56px);
+    width: var(--ui-slot-icon-size);
+    height: var(--ui-slot-icon-size);
     filter: drop-shadow(0 0 9px rgba(173, 211, 253, 0.42));
 }
 
@@ -517,10 +565,12 @@ html[data-theme="light"] .flow-layout-bottle {
 }
 
 .flow-stack .recipe-node-label {
-    font-size: clamp(0.84rem, 1.35vw, 1rem);
-    line-height: 1.25;
+    font-size: var(--ui-slot-label-size);
+    font-weight: 700;
+    line-height: 1.18;
     color: #eef5ff;
     letter-spacing: 0.01em;
+    text-wrap: balance;
     overflow-wrap: anywhere;
 }
 
@@ -576,10 +626,171 @@ html[data-theme="light"] .flow-layout-bottle {
     margin-top: 0.35rem;
     width: min(100%, 620px);
     align-self: center;
+    position: relative;
+    top: var(--ui-modifiers-offset-y, 0px);
+    left: var(--ui-modifiers-offset-x, 0px);
+    scale: var(--ui-modifiers-scale, 1);
+    transform-origin: top center;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 0.6rem;
+}
+
+.layout-tuner-root {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.55rem;
+}
+
+.layout-tuner-toggle {
+    border: 1px solid rgba(165, 197, 236, 0.58);
+    border-radius: 11px;
+    padding: 0.46rem 0.7rem;
+    color: var(--text);
+    background: linear-gradient(155deg, rgba(58, 80, 116, 0.96) 0%, rgba(38, 53, 76, 0.94) 100%);
+    box-shadow: 0 8px 22px rgba(6, 13, 24, 0.42);
+    cursor: pointer;
+    font-size: 0.83rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+}
+
+.layout-tuner-panel {
+    width: min(430px, calc(100vw - 2rem));
+    max-height: min(80vh, 760px);
+    overflow: auto;
+    border: 1px solid rgba(163, 193, 233, 0.45);
+    border-radius: 15px;
+    padding: 0.74rem 0.76rem;
+    background: linear-gradient(165deg, rgba(24, 35, 52, 0.98) 0%, rgba(17, 25, 39, 0.98) 100%);
+    box-shadow: 0 18px 34px rgba(6, 13, 23, 0.5);
+}
+
+html[data-theme="light"] .layout-tuner-panel {
+    background: linear-gradient(165deg, rgba(248, 251, 255, 0.98) 0%, rgba(233, 240, 249, 0.98) 100%);
+    border-color: rgba(103, 141, 189, 0.55);
+    box-shadow: 0 12px 26px rgba(48, 74, 108, 0.2);
+}
+
+.layout-tuner-panel[hidden] {
+    display: none;
+}
+
+.layout-tuner-title {
+    margin: 0 0 0.58rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.layout-tuner-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.layout-tuner-row {
+    border: 1px solid rgba(145, 177, 220, 0.34);
+    border-radius: 11px;
+    padding: 0.52rem 0.56rem 0.6rem;
+    background: rgba(59, 81, 118, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+html[data-theme="light"] .layout-tuner-row {
+    background: rgba(152, 181, 218, 0.16);
+    border-color: rgba(117, 150, 194, 0.42);
+}
+
+.layout-tuner-row-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--text);
+}
+
+.layout-tuner-axis-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 0.5rem;
+}
+
+.layout-tuner-axis {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.layout-tuner-axis-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.28rem;
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-weight: 700;
+}
+
+.layout-tuner-axis input[type="range"] {
+    width: 100%;
+}
+
+.layout-tuner-value {
+    min-width: 3.5rem;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.layout-tuner-actions {
+    margin-top: 0.62rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.46rem;
+}
+
+.layout-tuner-btn {
+    border: 1px solid rgba(158, 191, 234, 0.44);
+    border-radius: 10px;
+    padding: 0.4rem 0.62rem;
+    background: rgba(63, 91, 129, 0.3);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 0.76rem;
+    font-weight: 700;
+}
+
+html[data-theme="light"] .layout-tuner-btn {
+    background: rgba(130, 166, 211, 0.2);
+    border-color: rgba(107, 145, 191, 0.46);
+}
+
+.layout-tuner-output {
+    margin: 0.62rem 0 0;
+    max-height: 200px;
+    overflow: auto;
+    border: 1px solid rgba(148, 180, 222, 0.4);
+    border-radius: 10px;
+    padding: 0.5rem;
+    background: rgba(11, 17, 28, 0.62);
+    color: #dcecff;
+    font-family: "SFMono-Regular", "Consolas", "Menlo", monospace;
+    font-size: 0.7rem;
+    line-height: 1.36;
+    white-space: pre-wrap;
+}
+
+html[data-theme="light"] .layout-tuner-output {
+    background: rgba(255, 255, 255, 0.78);
+    color: #1c3657;
+    border-color: rgba(116, 151, 196, 0.45);
 }
 
 .recipe-modifier-row {
@@ -825,6 +1036,11 @@ html[data-theme="light"] .flow-layout-bottle {
     }
 
     .recipe-flow-diagram {
+        --ui-slot-content-width: min(86%, 260px);
+        --ui-slot-icon-size: clamp(38px, 10vw, 54px);
+        --ui-slot-label-size: clamp(0.84rem, 3.1vw, 1rem);
+        --ui-top-slot-lift: clamp(0.34rem, 1.6vw, 0.66rem);
+        --ui-bottom-slot-lift: clamp(0.16rem, 0.9vw, 0.34rem);
         --ui-slot-offset-top: 0.92rem;
         --ui-stack-pad-top: clamp(1.35rem, 6vw, 2rem);
         --ui-stack-pad-bottom: clamp(0.55rem, 2.4vw, 1rem);
