@@ -481,6 +481,8 @@ const POTION_RECIPES = [
     return a.name.localeCompare(b.name);
 });
 
+const DEFAULT_POTION_ACCENT_RGB = "142 192 255";
+
 const state = {
     selectedPotionId: DEFAULT_POTION_ID,
     layoutTunerValues: null,
@@ -488,15 +490,210 @@ const state = {
 
 const preloadedAssetPaths = new Set();
 const pendingPreloadImages = new Map();
+const potionAccentRgbCache = new Map();
+const accentImagePromiseCache = new Map();
 
 document.addEventListener("DOMContentLoaded", () => {
     preloadPotionAssets(POTION_RECIPES);
     initializeThemeToggle();
+    void initializePotionGuide();
+});
+
+async function initializePotionGuide() {
+    await primeInitialPotionAccent();
     PotionGuidePage();
+    void primePotionAccents();
     if (shouldEnableLayoutTuner()) {
         initializeLayoutTuner();
     }
-});
+}
+
+function getPotionAccentRgb(potionId) {
+    return potionAccentRgbCache.get(potionId) || DEFAULT_POTION_ACCENT_RGB;
+}
+
+function applyPotionAccent(potion) {
+    if (!potion) {
+        return;
+    }
+
+    applyPotionAccentRgb(getPotionAccentRgb(potion.id));
+
+    void resolvePotionAccentRgb(potion).then((rgb) => {
+        if (state.selectedPotionId === potion.id) {
+            applyPotionAccentRgb(rgb);
+        }
+    });
+}
+
+function applyPotionAccentRgb(rgb) {
+    const page = document.getElementById("potion-guide-page");
+    if (!page) {
+        return;
+    }
+
+    page.style.setProperty("--potion-accent-rgb", rgb);
+}
+
+async function primePotionAccents() {
+    await Promise.all(POTION_RECIPES.map((potion) => resolvePotionAccentRgb(potion)));
+    syncPotionListAccents();
+    applyPotionAccent(getSelectedPotion());
+}
+
+async function primeInitialPotionAccent() {
+    const selectedPotion = getSelectedPotion();
+    const rgb = await resolvePotionAccentRgb(selectedPotion);
+    applyPotionAccentRgb(rgb);
+}
+
+async function resolvePotionAccentRgb(potion) {
+    if (!potion) {
+        return DEFAULT_POTION_ACCENT_RGB;
+    }
+
+    const cachedAccent = potionAccentRgbCache.get(potion.id);
+    if (cachedAccent) {
+        return cachedAccent;
+    }
+
+    const bottlePath = getPotionBottleAsset(potion);
+
+    try {
+        const image = await loadAccentImage(bottlePath);
+        const rgb = samplePotionBottleCenterRgb(image);
+        potionAccentRgbCache.set(potion.id, rgb);
+        return rgb;
+    } catch (_error) {
+        potionAccentRgbCache.set(potion.id, DEFAULT_POTION_ACCENT_RGB);
+        return DEFAULT_POTION_ACCENT_RGB;
+    }
+}
+
+function loadAccentImage(path) {
+    if (!path) {
+        return Promise.reject(new Error("Missing accent image path."));
+    }
+
+    const cachedPromise = accentImagePromiseCache.get(path);
+    if (cachedPromise) {
+        return cachedPromise;
+    }
+
+    const imagePromise = new Promise((resolve, reject) => {
+        const image = new Image();
+        image.decoding = "async";
+        image.onload = () => resolve(image);
+        image.onerror = () => reject(new Error(`Failed to load accent image: ${path}`));
+        image.src = path;
+
+        if (image.complete && image.naturalWidth > 0) {
+            resolve(image);
+        }
+    });
+
+    accentImagePromiseCache.set(path, imagePromise);
+    return imagePromise;
+}
+
+function samplePotionBottleCenterRgb(image) {
+    const width = image.naturalWidth || image.width;
+    const height = image.naturalHeight || image.height;
+    if (!width || !height) {
+        return DEFAULT_POTION_ACCENT_RGB;
+    }
+
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+
+    const context = canvas.getContext("2d", { willReadFrequently: true });
+    if (!context) {
+        return DEFAULT_POTION_ACCENT_RGB;
+    }
+
+    context.drawImage(image, 0, 0, width, height);
+
+    const centerX = Math.floor(width / 2);
+    const centerY = Math.floor(height / 2);
+    const sampleRadius = Math.max(3, Math.round(Math.min(width, height) * 0.06));
+    const left = clampSampleCoordinate(centerX - sampleRadius, width);
+    const top = clampSampleCoordinate(centerY - sampleRadius, height);
+    const sampleWidth = Math.max(1, Math.min(width - left, (sampleRadius * 2) + 1));
+    const sampleHeight = Math.max(1, Math.min(height - top, (sampleRadius * 2) + 1));
+    const imageData = context.getImageData(left, top, sampleWidth, sampleHeight).data;
+
+    let redTotal = 0;
+    let greenTotal = 0;
+    let blueTotal = 0;
+    let weightTotal = 0;
+
+    for (let index = 0; index < imageData.length; index += 4) {
+        const alpha = imageData[index + 3] / 255;
+        if (alpha < 0.2) {
+            continue;
+        }
+
+        redTotal += imageData[index] * alpha;
+        greenTotal += imageData[index + 1] * alpha;
+        blueTotal += imageData[index + 2] * alpha;
+        weightTotal += alpha;
+    }
+
+    if (weightTotal === 0) {
+        return DEFAULT_POTION_ACCENT_RGB;
+    }
+
+    const red = Math.round(redTotal / weightTotal);
+    const green = Math.round(greenTotal / weightTotal);
+    const blue = Math.round(blueTotal / weightTotal);
+    return `${red} ${green} ${blue}`;
+}
+
+function clampSampleCoordinate(value, max) {
+    return Math.max(0, Math.min(value, max - 1));
+}
+
+function focusPotionListButton(index) {
+    const buttons = [...document.querySelectorAll(".potion-list-item")];
+    if (buttons.length === 0) {
+        return;
+    }
+
+    const clampedIndex = Math.max(0, Math.min(index, buttons.length - 1));
+    buttons[clampedIndex].focus();
+}
+
+function handlePotionListItemKeydown(event, button) {
+    const buttons = [...document.querySelectorAll(".potion-list-item")];
+    const currentIndex = buttons.indexOf(button);
+    if (currentIndex === -1) {
+        return;
+    }
+
+    if (event.key === "ArrowDown") {
+        event.preventDefault();
+        focusPotionListButton(currentIndex + 1);
+        return;
+    }
+
+    if (event.key === "ArrowUp") {
+        event.preventDefault();
+        focusPotionListButton(currentIndex - 1);
+        return;
+    }
+
+    if (event.key === "Home") {
+        event.preventDefault();
+        focusPotionListButton(0);
+        return;
+    }
+
+    if (event.key === "End") {
+        event.preventDefault();
+        focusPotionListButton(buttons.length - 1);
+    }
+}
 
 function shouldEnableLayoutTuner() {
     try {
@@ -810,13 +1007,25 @@ function PotionSidebar() {
     );
 }
 
+function syncPotionListAccents() {
+    document.querySelectorAll(".potion-list-item").forEach((button) => {
+        const potionId = button.dataset.potionId;
+        if (!potionId) {
+            return;
+        }
+
+        button.style.setProperty("--potion-row-accent-rgb", getPotionAccentRgb(potionId));
+    });
+}
+
 function PotionListItem(potion, isSelected, index) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = `potion-list-item${isSelected ? " is-selected" : ""}`;
     button.dataset.potionId = potion.id;
     button.setAttribute("aria-pressed", isSelected ? "true" : "false");
-    button.style.setProperty("--entry-delay", `${index * 28}ms`);
+    button.style.setProperty("--entry-delay", `${index * 24}ms`);
+    button.style.setProperty("--potion-row-accent-rgb", getPotionAccentRgb(potion.id));
 
     const navIcon = document.createElement("img");
     navIcon.className = "potion-nav-icon";
@@ -824,13 +1033,22 @@ function PotionListItem(potion, isSelected, index) {
     navIcon.alt = "";
     navIcon.setAttribute("aria-hidden", "true");
 
+    const copy = document.createElement("span");
+    copy.className = "potion-list-copy";
+
     const name = document.createElement("span");
     name.className = "potion-name";
     name.textContent = potion.name;
-    button.append(navIcon, name);
+
+    copy.append(name);
+    button.append(navIcon, copy);
 
     button.addEventListener("click", () => {
         selectPotion(potion.id);
+    });
+
+    button.addEventListener("keydown", (event) => {
+        handlePotionListItemKeydown(event, button);
     });
 
     return button;
@@ -842,6 +1060,8 @@ function PotionRecipePanel(potion) {
         return;
     }
 
+    applyPotionAccent(potion);
+    panel.setAttribute("aria-label", `${potion.name} recipe`);
     panel.replaceChildren(RecipeFlowDiagram(potion));
     applyLayoutTunerValues(state.layoutTunerValues);
 }
@@ -861,12 +1081,15 @@ function RecipeHeader(potion) {
 
     const textWrap = document.createElement("div");
     textWrap.className = "recipe-title-block";
+
     const title = document.createElement("h2");
     title.className = "recipe-title";
     title.textContent = potion.name;
+
     const duration = document.createElement("p");
     duration.className = "recipe-duration";
-    duration.textContent = potion.duration;
+    duration.textContent = formatPotionDurationLabel(potion.duration);
+
     textWrap.append(title, duration);
 
     header.append(iconShell, textWrap);
@@ -910,23 +1133,40 @@ function RecipeFlowDiagram(potion) {
 
     const stack = document.createElement("div");
     stack.className = "flow-stack";
-    stack.append(
-        createRecipeNode(flow.ingredient),
-        createRecipeNode(flow.basePotion)
-    );
+    const ingredientNode = createRecipeNode(flow.ingredient);
+    const baseNode = createRecipeNode(flow.basePotion);
+    setFlowDelay(ingredientNode, 120);
+    setFlowDelay(baseNode, 200);
+    stack.append(ingredientNode, baseNode);
     layoutArt.append(layoutBubbles, layoutBottle, layoutMain, layoutArrow, stack);
 
     const modifierLane = document.createElement("div");
     modifierLane.className = "modifier-lane";
 
-    (flow.modifiers || []).forEach((modifier) => {
-        modifierLane.append(RecipeModifierRow(modifier));
+    (flow.modifiers || []).forEach((modifier, index) => {
+        const modifierRow = RecipeModifierRow(modifier);
+        setFlowDelay(modifierRow, 300 + (index * 90));
+        modifierLane.append(modifierRow);
     });
 
-    modifierLane.append(createFinalPotionNode(flow.finalPotion));
+    const finalPotionNode = createFinalPotionNode(flow.finalPotion);
+    setFlowDelay(finalPotionNode, 420 + ((flow.modifiers || []).length * 90));
+    modifierLane.append(finalPotionNode);
 
     section.append(titleHeader, layoutArt, modifierLane);
     return section;
+}
+
+function formatPotionDurationLabel(duration) {
+    if (duration === "Instant") {
+        return "Instant effect";
+    }
+
+    if (duration === "Base") {
+        return "Foundation brew";
+    }
+
+    return `${duration} base duration`;
 }
 
 function createRecipeNode(nodeData) {
@@ -1011,11 +1251,19 @@ function createFinalPotionNode(finalPotion) {
         iconShell.append(createIconFallback(finalPotion?.label || "?"));
     }
 
+    const text = document.createElement("span");
+    text.className = "final-potion-text";
+
+    const prefix = document.createElement("span");
+    prefix.className = "final-potion-prefix";
+    prefix.textContent = "Result";
+
     const label = document.createElement("span");
     label.className = "final-potion-label";
     label.textContent = finalPotion?.label || "";
 
-    node.append(iconShell, label);
+    text.append(prefix, label);
+    node.append(iconShell, text);
     return node;
 }
 
@@ -1060,6 +1308,7 @@ function syncPotionListSelection(previousPotionId, nextPotionId) {
     if (nextButton) {
         nextButton.classList.add("is-selected");
         nextButton.setAttribute("aria-pressed", "true");
+        nextButton.scrollIntoView({ block: "nearest", inline: "nearest" });
     }
 }
 
