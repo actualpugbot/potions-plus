@@ -29,19 +29,51 @@ const LAYOUT_TUNER_DEFAULT_VALUES = {
     "--ui-arrow-offset-x": 0,
     "--ui-arrow-offset-y": 0,
     "--ui-arrow-scale": 1,
-    "--ui-top-slot-offset-x": -1,
-    "--ui-top-slot-offset-y": -64,
-    "--ui-top-slot-scale": 1.24,
+    "--ui-top-slot-offset-x": 0,
+    "--ui-top-slot-offset-y": 0,
+    "--ui-top-slot-scale": 1,
     "--ui-bottom-slot-offset-x": 0,
-    "--ui-bottom-slot-offset-y": 30,
-    "--ui-bottom-slot-scale": 1.38,
+    "--ui-bottom-slot-offset-y": 0,
+    "--ui-bottom-slot-scale": 1,
     "--ui-bottle-offset-x": 0,
     "--ui-bottle-offset-y": 0,
     "--ui-bottle-scale": 1.24,
-    "--ui-modifiers-offset-x": 168,
+    "--ui-modifiers-offset-x": 0,
     "--ui-modifiers-offset-y": 0,
     "--ui-modifiers-scale": 1.1,
 };
+const BUBBLE_FRAME_INTERVAL_MS = 520;
+const BUBBLE_FINAL_FRAME_HOLD_MS = 3600;
+const BACKGROUND_ASSET_WARMUP_IDLE_TIMEOUT_MS = 180;
+const UI_MAIN_SOURCE_SIZE = {
+    width: 523,
+    height: 1226,
+};
+const UI_MAIN_SLOT_GEOMETRY = {
+    top: {
+        left: 20,
+        top: 20,
+        size: 482,
+        centeredContentHeight: 415,
+    },
+    bottom: {
+        left: 20,
+        top: 723,
+        size: 482,
+        centeredContentHeight: 415,
+    },
+};
+const RECIPE_SLOT_MIN_ICON_SIZE = 16;
+const RECIPE_SLOT_TARGET_VISIBLE_WIDTH_RATIO = 0.58;
+const RECIPE_SLOT_TARGET_VISIBLE_HEIGHT_RATIO = 0.78;
+const UI_MAIN_ASSET_PATH = "./ui_elements/UI_main.png";
+const UI_BUBBLE_FRAME_PATHS = Array.from({ length: 9 }, (_unused, index) => `./ui_elements/bubbles_${index}.png`);
+const UI_ARROW_FRAME_PATHS = Array.from({ length: 9 }, (_unused, index) => `./ui_elements/arrow_${index}.png`);
+const UI_LAYOUT_ASSET_PATHS = [
+    UI_MAIN_ASSET_PATH,
+    ...UI_BUBBLE_FRAME_PATHS,
+    ...UI_ARROW_FRAME_PATHS,
+];
 
 const ASSETS = {
     effects: {
@@ -87,69 +119,69 @@ const ASSETS = {
         infestation: "./effect_icons/effect_infestation_outlined.png",
     },
     ingredients: {
-        blazePowder: "./ingredients/blaze_powder_outlined.png",
-        netherWart: "./ingredients/nether_wart_outlined.png",
-        magmaCream: "./ingredients/magma_cream_outlined.png",
-        redstoneDust: "./ingredients/redstone_dust_outlined.png",
-        gunpowder: "./ingredients/gunpowder_outlined.png",
-        ghastTear: "./ingredients/ghast_tear_outlined.png",
-        sugar: "./ingredients/sugar_outlined.png",
-        glisteringWatermelon: "./ingredients/glistering_watermelon_outlined.png",
-        glowstoneDust: "./ingredients/glowstone_dust_outlined.png",
-        goldenCarrot: "./ingredients/golden_carrot_outlined.png",
-        pufferfish: "./ingredients/pufferfish_outlined.png",
-        fermentedSpiderEye: "./ingredients/fermented_spider_eye_outlined.png",
-        rabbitsFoot: "./ingredients/rabbits_foot_outlined.png",
-        spiderEye: "./ingredients/spider_eye_outlined.png",
-        phantomMembrane: "./ingredients/phantom_membrane_outlined.png",
-        turtleShell: "./ingredients/turtle_shell_outlined.png",
-        slimeBlock: "./ingredients/slime_block_outlined.png",
-        cobweb: "./ingredients/cobweb_outlined.png",
-        breezeRod: "./ingredients/breeze_rod_outlined.png",
-        stone: "./ingredients/stone_outlined.png",
+        blazePowder: "./ingredients/blaze_powder.png",
+        netherWart: "./ingredients/nether_wart.png",
+        magmaCream: "./ingredients/magma_cream.png",
+        redstoneDust: "./ingredients/redstone_dust.png",
+        gunpowder: "./ingredients/gunpowder.png",
+        ghastTear: "./ingredients/ghast_tear.png",
+        sugar: "./ingredients/sugar.png",
+        glisteringWatermelon: "./ingredients/glistering_watermelon.png",
+        glowstoneDust: "./ingredients/glowstone_dust.png",
+        goldenCarrot: "./ingredients/golden_carrot.png",
+        pufferfish: "./ingredients/pufferfish.png",
+        fermentedSpiderEye: "./ingredients/fermented_spider_eye.png",
+        rabbitsFoot: "./ingredients/rabbits_foot.png",
+        spiderEye: "./ingredients/spider_eye.png",
+        phantomMembrane: "./ingredients/phantom_membrane.png",
+        turtleShell: "./ingredients/turtle_shell.png",
+        slimeBlock: "./ingredients/slime_block.png",
+        cobweb: "./ingredients/cobweb.png",
+        breezeRod: "./ingredients/breeze_rod.png",
+        stone: "./ingredients/stone.png",
     },
     potions: {
-        waterBottle: "./potion_bottles/water_bottle_outlined.png",
-        fireResistance: "./potion_bottles/potion_of_fire_resistance_outlined.png",
-        regeneration: "./potion_bottles/potion_of_regeneration_outlined.png",
-        strength: "./potion_bottles/potion_of_strength_outlined.png",
-        swiftness: "./potion_bottles/potion_of_swiftness_outlined.png",
-        leaping: "./potion_bottles/potion_of_leaping_outlined.png",
-        slowness: "./potion_bottles/potion_of_slowness_outlined.png",
-        weakness: "./potion_bottles/potion_of_weakness_outlined.png",
-        poison: "./potion_bottles/potion_of_poison_outlined.png",
-        harming: "./potion_bottles/potion_of_harming_outlined.png",
-        healing: "./potion_bottles/potion_of_healing_outlined.png",
-        nightVision: "./potion_bottles/potion_of_night_vision_outlined.png",
-        waterBreathing: "./potion_bottles/potion_of_water_breathing_outlined.png",
-        invisibility: "./potion_bottles/potion_of_invisibility_outlined.png",
-        turtleMaster: "./potion_bottles/potion_of_the_turtle_master_outlined.png",
-        slowFalling: "./potion_bottles/potion_of_slow_falling_outlined.png",
-        oozing: "./potion_bottles/potion_of_oozing_outlined.png",
-        weaving: "./potion_bottles/potion_of_weaving_outlined.png",
-        windCharging: "./potion_bottles/potion_of_wind_charging_outlined.png",
-        infestation: "./potion_bottles/potion_of_infestation_outlined.png",
+        waterBottle: "./potion_bottles/water_bottle.png",
+        fireResistance: "./potion_bottles/potion_of_fire_resistance.png",
+        regeneration: "./potion_bottles/potion_of_regeneration.png",
+        strength: "./potion_bottles/potion_of_strength.png",
+        swiftness: "./potion_bottles/potion_of_swiftness.png",
+        leaping: "./potion_bottles/potion_of_leaping.png",
+        slowness: "./potion_bottles/potion_of_slowness.png",
+        weakness: "./potion_bottles/potion_of_weakness.png",
+        poison: "./potion_bottles/potion_of_poison.png",
+        harming: "./potion_bottles/potion_of_harming.png",
+        healing: "./potion_bottles/potion_of_healing.png",
+        nightVision: "./potion_bottles/potion_of_night_vision.png",
+        waterBreathing: "./potion_bottles/potion_of_water_breathing.png",
+        invisibility: "./potion_bottles/potion_of_invisibility.png",
+        turtleMaster: "./potion_bottles/potion_of_the_turtle_master.png",
+        slowFalling: "./potion_bottles/potion_of_slow_falling.png",
+        oozing: "./potion_bottles/potion_of_oozing.png",
+        weaving: "./potion_bottles/potion_of_weaving.png",
+        windCharging: "./potion_bottles/potion_of_wind_charging.png",
+        infestation: "./potion_bottles/potion_of_infestation.png",
     },
     splashPotions: {
         fireResistance: "./potion_bottles/splash_potion_of_fire_resistance.png",
-        regeneration: "./potion_bottles/splash_potion_of_regeneration_outlined.png",
-        strength: "./potion_bottles/splash_potion_of_strength_outlined.png",
-        swiftness: "./potion_bottles/splash_potion_of_switfness_outlined.png",
-        leaping: "./potion_bottles/splash_potion_of_leaping_outlined.png",
-        slowness: "./potion_bottles/splash_potion_of_slowness_outlined.png",
-        weakness: "./potion_bottles/splash_potion_of_weakness_outlined.png",
-        poison: "./potion_bottles/splash_potion_of_poison_outlined.png",
-        harming: "./potion_bottles/splash_potion_of_harming_outlined.png",
-        healing: "./potion_bottles/splash_potion_of_healing_outlined.png",
-        nightVision: "./potion_bottles/splash_potion_of_night_vision_outlined.png",
-        waterBreathing: "./potion_bottles/splash_potion_of_water_breathing_outlined.png",
-        invisibility: "./potion_bottles/splash_potion_of_invisibility_outlined.png",
-        turtleMaster: "./potion_bottles/splash_potion_of_the_turtle_master_outlined.png",
-        slowFalling: "./potion_bottles/splash_potion_of_slow_falling_outlined.png",
-        oozing: "./potion_bottles/splash_potion_of_oozing_outlined.png",
-        weaving: "./potion_bottles/splash_potion_of_weaving_outlined.png",
-        windCharging: "./potion_bottles/splash_potion_of_wind_charging_outlined.png",
-        infestation: "./potion_bottles/splash_potion_of_infestation_outlined.png",
+        regeneration: "./potion_bottles/splash_potion_of_regeneration.png",
+        strength: "./potion_bottles/splash_potion_of_strength.png",
+        swiftness: "./potion_bottles/splash_potion_of_switfness.png",
+        leaping: "./potion_bottles/splash_potion_of_leaping.png",
+        slowness: "./potion_bottles/splash_potion_of_slowness.png",
+        weakness: "./potion_bottles/splash_potion_of_weakness.png",
+        poison: "./potion_bottles/splash_potion_of_poison.png",
+        harming: "./potion_bottles/splash_potion_of_harming.png",
+        healing: "./potion_bottles/splash_potion_of_healing.png",
+        nightVision: "./potion_bottles/splash_potion_of_night_vision.png",
+        waterBreathing: "./potion_bottles/splash_potion_of_water_breathing.png",
+        invisibility: "./potion_bottles/splash_potion_of_invisibility.png",
+        turtleMaster: "./potion_bottles/splash_potion_of_the_turtle_master.png",
+        slowFalling: "./potion_bottles/splash_potion_of_slow_falling.png",
+        oozing: "./potion_bottles/splash_potion_of_oozing.png",
+        weaving: "./potion_bottles/splash_potion_of_weaving.png",
+        windCharging: "./potion_bottles/splash_potion_of_wind_charging.png",
+        infestation: "./potion_bottles/splash_potion_of_infestation.png",
     },
 };
 
@@ -159,7 +191,7 @@ const POTION_RECIPES = [
         name: "Fire Resistance",
         duration: "3:00",
         navIcon: ASSETS.effects.fireResistance,
-        titleIcon: ASSETS.effectsOutlined.fireResistance,
+        titleIcon: ASSETS.effects.fireResistance,
         flow: {
             ingredient: { name: "Magma Cream", icon: ASSETS.ingredients.magmaCream },
             basePotion: { name: "Awkward Potion", icon: ASSETS.potions.waterBottle },
@@ -175,7 +207,7 @@ const POTION_RECIPES = [
         name: "Harming",
         duration: "Instant",
         navIcon: ASSETS.effects.harming,
-        titleIcon: ASSETS.effectsOutlined.harming,
+        titleIcon: ASSETS.effects.harming,
         flow: {
             ingredient: { name: "Fermented Spider Eye", icon: ASSETS.ingredients.fermentedSpiderEye },
             basePotion: { name: "Instant Health Potion", icon: ASSETS.potions.healing },
@@ -191,7 +223,7 @@ const POTION_RECIPES = [
         name: "Regeneration",
         duration: "0:45",
         navIcon: ASSETS.effects.regeneration,
-        titleIcon: ASSETS.effectsOutlined.regeneration,
+        titleIcon: ASSETS.effects.regeneration,
         flow: {
             ingredient: { name: "Ghast Tear", icon: ASSETS.ingredients.ghastTear },
             basePotion: { name: "Awkward Potion", icon: ASSETS.potions.waterBottle },
@@ -207,7 +239,7 @@ const POTION_RECIPES = [
         name: "Strength",
         duration: "3:00",
         navIcon: ASSETS.effects.strength,
-        titleIcon: ASSETS.effectsOutlined.strength,
+        titleIcon: ASSETS.effects.strength,
         flow: {
             ingredient: { name: "Blaze Powder", icon: ASSETS.ingredients.blazePowder },
             basePotion: { name: "Awkward Potion", icon: ASSETS.potions.waterBottle },
@@ -223,7 +255,7 @@ const POTION_RECIPES = [
         name: "Swiftness",
         duration: "3:00",
         navIcon: ASSETS.effects.swiftness,
-        titleIcon: ASSETS.effectsOutlined.swiftness,
+        titleIcon: ASSETS.effects.swiftness,
         flow: {
             ingredient: { name: "Sugar", icon: ASSETS.ingredients.sugar },
             basePotion: { name: "Awkward Potion", icon: ASSETS.potions.waterBottle },
@@ -239,7 +271,7 @@ const POTION_RECIPES = [
         name: "Leaping",
         duration: "3:00",
         navIcon: ASSETS.effects.leaping,
-        titleIcon: ASSETS.effectsOutlined.leaping,
+        titleIcon: ASSETS.effects.leaping,
         flow: {
             ingredient: { name: "Rabbit's Foot", icon: ASSETS.ingredients.rabbitsFoot },
             basePotion: { name: "Awkward Potion", icon: ASSETS.potions.waterBottle },
@@ -255,7 +287,7 @@ const POTION_RECIPES = [
         name: "Slowness",
         duration: "1:30",
         navIcon: ASSETS.effects.slowness,
-        titleIcon: ASSETS.effectsOutlined.slowness,
+        titleIcon: ASSETS.effects.slowness,
         flow: {
             ingredient: { name: "Fermented Spider Eye", icon: ASSETS.ingredients.fermentedSpiderEye },
             basePotion: { name: "Potion of Swiftness", icon: ASSETS.potions.swiftness },
@@ -271,7 +303,7 @@ const POTION_RECIPES = [
         name: "Weakness",
         duration: "1:30",
         navIcon: ASSETS.effects.weakness,
-        titleIcon: ASSETS.effectsOutlined.weakness,
+        titleIcon: ASSETS.effects.weakness,
         flow: {
             ingredient: { name: "Fermented Spider Eye", icon: ASSETS.ingredients.fermentedSpiderEye },
             basePotion: { name: "Water Bottle", icon: ASSETS.potions.waterBottle },
@@ -287,7 +319,7 @@ const POTION_RECIPES = [
         name: "Poison",
         duration: "0:45",
         navIcon: ASSETS.effects.poison,
-        titleIcon: ASSETS.effectsOutlined.poison,
+        titleIcon: ASSETS.effects.poison,
         flow: {
             ingredient: { name: "Spider Eye", icon: ASSETS.ingredients.spiderEye },
             basePotion: { name: "Awkward Potion", icon: ASSETS.potions.waterBottle },
@@ -303,7 +335,7 @@ const POTION_RECIPES = [
         name: "Healing",
         duration: "Instant",
         navIcon: ASSETS.effects.healing,
-        titleIcon: ASSETS.effectsOutlined.healing,
+        titleIcon: ASSETS.effects.healing,
         flow: {
             ingredient: { name: "Glistering Watermelon", icon: ASSETS.ingredients.glisteringWatermelon },
             basePotion: { name: "Awkward Potion", icon: ASSETS.potions.waterBottle },
@@ -319,7 +351,7 @@ const POTION_RECIPES = [
         name: "Night Vision",
         duration: "3:00",
         navIcon: ASSETS.effects.nightVision,
-        titleIcon: ASSETS.effectsOutlined.nightVision,
+        titleIcon: ASSETS.effects.nightVision,
         flow: {
             ingredient: { name: "Golden Carrot", icon: ASSETS.ingredients.goldenCarrot },
             basePotion: { name: "Awkward Potion", icon: ASSETS.potions.waterBottle },
@@ -335,7 +367,7 @@ const POTION_RECIPES = [
         name: "Water Breathing",
         duration: "3:00",
         navIcon: ASSETS.effects.waterBreathing,
-        titleIcon: ASSETS.effectsOutlined.waterBreathing,
+        titleIcon: ASSETS.effects.waterBreathing,
         flow: {
             ingredient: { name: "Pufferfish", icon: ASSETS.ingredients.pufferfish },
             basePotion: { name: "Awkward Potion", icon: ASSETS.potions.waterBottle },
@@ -351,7 +383,7 @@ const POTION_RECIPES = [
         name: "Invisibility",
         duration: "3:00",
         navIcon: ASSETS.effects.invisibility,
-        titleIcon: ASSETS.effectsOutlined.invisibility,
+        titleIcon: ASSETS.effects.invisibility,
         flow: {
             ingredient: { name: "Fermented Spider Eye", icon: ASSETS.ingredients.fermentedSpiderEye },
             basePotion: { name: "Night Vision Potion", icon: ASSETS.potions.nightVision },
@@ -367,7 +399,7 @@ const POTION_RECIPES = [
         name: "Turtle Master",
         duration: "0:20",
         navIcon: ASSETS.effects.turtleMaster,
-        titleIcon: ASSETS.effectsOutlined.turtleMaster,
+        titleIcon: ASSETS.effects.turtleMaster,
         flow: {
             ingredient: { name: "Turtle Shell", icon: ASSETS.ingredients.turtleShell },
             basePotion: { name: "Awkward Potion", icon: ASSETS.potions.waterBottle },
@@ -383,7 +415,7 @@ const POTION_RECIPES = [
         name: "Slow Falling",
         duration: "1:30",
         navIcon: ASSETS.effects.slowFalling,
-        titleIcon: ASSETS.effectsOutlined.slowFalling,
+        titleIcon: ASSETS.effects.slowFalling,
         flow: {
             ingredient: { name: "Phantom Membrane", icon: ASSETS.ingredients.phantomMembrane },
             basePotion: { name: "Awkward Potion", icon: ASSETS.potions.waterBottle },
@@ -399,7 +431,7 @@ const POTION_RECIPES = [
         name: "Oozing",
         duration: "3:00",
         navIcon: ASSETS.effects.oozing,
-        titleIcon: ASSETS.effectsOutlined.oozing,
+        titleIcon: ASSETS.effects.oozing,
         flow: {
             ingredient: { name: "Slime Block", icon: ASSETS.ingredients.slimeBlock },
             basePotion: { name: "Awkward Potion", icon: ASSETS.potions.waterBottle },
@@ -415,7 +447,7 @@ const POTION_RECIPES = [
         name: "Weaving",
         duration: "3:00",
         navIcon: ASSETS.effects.weaving,
-        titleIcon: ASSETS.effectsOutlined.weaving,
+        titleIcon: ASSETS.effects.weaving,
         flow: {
             ingredient: { name: "Cobweb", icon: ASSETS.ingredients.cobweb },
             basePotion: { name: "Awkward Potion", icon: ASSETS.potions.waterBottle },
@@ -431,7 +463,7 @@ const POTION_RECIPES = [
         name: "Wind Charging",
         duration: "3:00",
         navIcon: ASSETS.effects.windCharging,
-        titleIcon: ASSETS.effectsOutlined.windCharging,
+        titleIcon: ASSETS.effects.windCharging,
         flow: {
             ingredient: { name: "Breeze Rod", icon: ASSETS.ingredients.breezeRod },
             basePotion: { name: "Awkward Potion", icon: ASSETS.potions.waterBottle },
@@ -460,7 +492,7 @@ const POTION_RECIPES = [
         name: "Infestation",
         duration: "3:00",
         navIcon: ASSETS.effects.infestation,
-        titleIcon: ASSETS.effectsOutlined.infestation,
+        titleIcon: ASSETS.effects.infestation,
         flow: {
             ingredient: { name: "Stone", icon: ASSETS.ingredients.stone },
             basePotion: { name: "Awkward Potion", icon: ASSETS.potions.waterBottle },
@@ -488,20 +520,36 @@ const state = {
     layoutTunerValues: null,
 };
 
-const preloadedAssetPaths = new Set();
-const pendingPreloadImages = new Map();
+const assetImagePromiseCache = new Map();
+const assetNaturalSizeCache = new Map();
+const assetVisibleBoundsRatioCache = new Map();
+const ingredientLabelHeightCache = new Map();
+const queuedBackgroundAssetPaths = new Set();
+const backgroundAssetQueue = [];
 const potionAccentRgbCache = new Map();
-const accentImagePromiseCache = new Map();
+let backgroundAssetQueueIsRunning = false;
+let bubbleAnimationTimerId = null;
+let bubbleAnimationFrameIndex = 0;
+let recipePanelRenderRequestId = 0;
+let recipeSlotFitFrameId = null;
+let ingredientSlotScaleReadyPromise = null;
+let ingredientSlotLargestVisibleBoundsRatio = 1;
 
 document.addEventListener("DOMContentLoaded", () => {
-    preloadPotionAssets(POTION_RECIPES);
     initializeThemeToggle();
+    initializeRecipeSlotFitUpdates();
     void initializePotionGuide();
 });
 
 async function initializePotionGuide() {
-    await primeInitialPotionAccent();
+    const selectedPotion = getSelectedPotion();
+    await Promise.all([
+        ensurePotionRenderAssets(selectedPotion),
+        ensureIngredientSlotScaleReady(),
+        primeInitialPotionAccent(),
+    ]);
     PotionGuidePage();
+    warmPotionAssetsInBackground(selectedPotion);
     void primePotionAccents();
     if (shouldEnableLayoutTuner()) {
         initializeLayoutTuner();
@@ -536,7 +584,14 @@ function applyPotionAccentRgb(rgb) {
 }
 
 async function primePotionAccents() {
-    await Promise.all(POTION_RECIPES.map((potion) => resolvePotionAccentRgb(potion)));
+    const uncachedPotions = POTION_RECIPES.filter((potion) => !potionAccentRgbCache.has(potion.id));
+    for (const potion of uncachedPotions) {
+        await waitForBrowserIdle();
+        await resolvePotionAccentRgb(potion);
+        syncPotionListAccent(potion.id);
+        await waitForNextPaint();
+    }
+
     syncPotionListAccents();
     applyPotionAccent(getSelectedPotion());
 }
@@ -571,29 +626,7 @@ async function resolvePotionAccentRgb(potion) {
 }
 
 function loadAccentImage(path) {
-    if (!path) {
-        return Promise.reject(new Error("Missing accent image path."));
-    }
-
-    const cachedPromise = accentImagePromiseCache.get(path);
-    if (cachedPromise) {
-        return cachedPromise;
-    }
-
-    const imagePromise = new Promise((resolve, reject) => {
-        const image = new Image();
-        image.decoding = "async";
-        image.onload = () => resolve(image);
-        image.onerror = () => reject(new Error(`Failed to load accent image: ${path}`));
-        image.src = path;
-
-        if (image.complete && image.naturalWidth > 0) {
-            resolve(image);
-        }
-    });
-
-    accentImagePromiseCache.set(path, imagePromise);
-    return imagePromise;
+    return loadAssetImage(path, { fetchPriority: "high" });
 }
 
 function samplePotionBottleCenterRgb(image) {
@@ -900,6 +933,8 @@ function applyLayoutTunerValues(values) {
         const isScaleVar = varName.endsWith("-scale");
         diagram.style.setProperty(varName, isScaleVar ? String(value) : `${value}px`);
     });
+
+    queueRecipeSlotFit();
 }
 
 function formatLayoutTunerOffsetValue(value) {
@@ -940,13 +975,14 @@ async function copyTextToClipboard(text) {
     return true;
 }
 
-function preloadPotionAssets(recipes) {
-    const assetPaths = collectPotionAssetPaths(recipes);
-    assetPaths.forEach(preloadAssetImage);
+async function ensurePotionRenderAssets(potion) {
+    const assetPaths = collectPotionRenderAssetPaths(potion);
+    await Promise.allSettled(assetPaths.map((path) => loadAssetImage(path, { fetchPriority: "high" })));
 }
 
 function collectPotionAssetPaths(recipes) {
     const paths = new Set();
+    UI_LAYOUT_ASSET_PATHS.forEach((path) => addAssetPath(paths, path));
     recipes.forEach((potion) => {
         addAssetPath(paths, potion.navIcon);
         addAssetPath(paths, potion.titleIcon);
@@ -956,7 +992,25 @@ function collectPotionAssetPaths(recipes) {
         addAssetPath(paths, potion.flow?.finalPotion?.icon);
         potion.flow?.modifiers?.forEach((modifier) => addAssetPath(paths, modifier.icon));
     });
-    return paths;
+    return [...paths];
+}
+
+function collectPotionRenderAssetPaths(potion) {
+    const paths = new Set();
+    UI_LAYOUT_ASSET_PATHS.forEach((path) => addAssetPath(paths, path));
+    addAssetPath(paths, potion?.titleIcon);
+    addAssetPath(paths, getPotionBottleAsset(potion));
+    addAssetPath(paths, potion?.flow?.ingredient?.icon);
+    addAssetPath(paths, potion?.flow?.basePotion?.icon);
+    addAssetPath(paths, potion?.flow?.finalPotion?.icon);
+    potion?.flow?.modifiers?.forEach((modifier) => addAssetPath(paths, modifier.icon));
+    return [...paths];
+}
+
+function collectPotionListAssetPaths(recipes) {
+    const paths = new Set();
+    recipes.forEach((potion) => addAssetPath(paths, potion.navIcon));
+    return [...paths];
 }
 
 function getPotionBottleAsset(potion) {
@@ -978,19 +1032,221 @@ function addAssetPath(paths, path) {
     paths.add(path);
 }
 
-function preloadAssetImage(path) {
-    if (preloadedAssetPaths.has(path)) {
+function warmPotionAssetsInBackground(selectedPotion) {
+    enqueueBackgroundAssetWarmup(collectPotionListAssetPaths(POTION_RECIPES));
+
+    const selectedPotionAssetPaths = new Set(collectPotionRenderAssetPaths(selectedPotion));
+    const remainingAssetPaths = collectPotionAssetPaths(POTION_RECIPES).filter((path) => !selectedPotionAssetPaths.has(path));
+    enqueueBackgroundAssetWarmup(remainingAssetPaths);
+}
+
+function warmPotionRenderAssets(potion) {
+    enqueueBackgroundAssetWarmup(collectPotionRenderAssetPaths(potion));
+}
+
+function enqueueBackgroundAssetWarmup(paths) {
+    paths.forEach((path) => {
+        if (!path || assetImagePromiseCache.has(path) || queuedBackgroundAssetPaths.has(path)) {
+            return;
+        }
+
+        queuedBackgroundAssetPaths.add(path);
+        backgroundAssetQueue.push(path);
+    });
+
+    if (!backgroundAssetQueueIsRunning && backgroundAssetQueue.length > 0) {
+        void drainBackgroundAssetQueue();
+    }
+}
+
+async function drainBackgroundAssetQueue() {
+    backgroundAssetQueueIsRunning = true;
+
+    while (backgroundAssetQueue.length > 0) {
+        const path = backgroundAssetQueue.shift();
+        queuedBackgroundAssetPaths.delete(path);
+
+        if (!path || assetImagePromiseCache.has(path)) {
+            continue;
+        }
+
+        await waitForBrowserIdle();
+        await loadAssetImage(path).catch(() => null);
+        await waitForNextPaint();
+    }
+
+    backgroundAssetQueueIsRunning = false;
+}
+
+function waitForBrowserIdle(timeout = BACKGROUND_ASSET_WARMUP_IDLE_TIMEOUT_MS) {
+    if (typeof window.requestIdleCallback === "function") {
+        return new Promise((resolve) => {
+            window.requestIdleCallback(() => resolve(), { timeout });
+        });
+    }
+
+    return new Promise((resolve) => {
+        window.setTimeout(resolve, 48);
+    });
+}
+
+function waitForNextPaint() {
+    return new Promise((resolve) => {
+        window.requestAnimationFrame(() => resolve());
+    });
+}
+
+function ensureIngredientSlotScaleReady() {
+    if (ingredientSlotScaleReadyPromise) {
+        return ingredientSlotScaleReadyPromise;
+    }
+
+    const ingredientPaths = getRecipeIngredientPaths();
+    ingredientSlotScaleReadyPromise = Promise.all(
+        ingredientPaths.map(async (path) => {
+            try {
+                const image = await loadAssetImage(path, { fetchPriority: "high" });
+                return getAssetVisibleBoundsRatio(path, image);
+            } catch (_error) {
+                return 1;
+            }
+        })
+    ).then((ratios) => {
+        ingredientSlotLargestVisibleBoundsRatio = Math.max(0.01, ...ratios);
+        queueRecipeSlotFit();
+    }).catch(() => {
+        ingredientSlotLargestVisibleBoundsRatio = 1;
+    });
+
+    return ingredientSlotScaleReadyPromise;
+}
+
+function getRecipeIngredientPaths() {
+    return [...new Set(POTION_RECIPES
+        .map((potion) => potion.flow?.ingredient?.icon)
+        .filter(Boolean))];
+}
+
+function getRecipeIngredientLabels() {
+    return [...new Set(POTION_RECIPES
+        .map((potion) => potion.flow?.ingredient?.name)
+        .filter(Boolean))];
+}
+
+function loadAssetImage(path, { fetchPriority = "auto" } = {}) {
+    if (!path) {
+        return Promise.reject(new Error("Missing asset image path."));
+    }
+
+    const cachedPromise = assetImagePromiseCache.get(path);
+    if (cachedPromise) {
+        return cachedPromise;
+    }
+
+    const imagePromise = new Promise((resolve, reject) => {
+        const image = new Image();
+        let isSettled = false;
+
+        const finalizeImage = async () => {
+            if (isSettled) {
+                return;
+            }
+
+            try {
+                if (typeof image.decode === "function") {
+                    await image.decode();
+                }
+            } catch (_error) {
+                if (!image.complete || image.naturalWidth === 0) {
+                    isSettled = true;
+                    reject(new Error(`Failed to decode asset image: ${path}`));
+                    return;
+                }
+            }
+
+            if (isSettled) {
+                return;
+            }
+
+            isSettled = true;
+            cacheAssetNaturalSize(path, image);
+            resolve(image);
+        };
+
+        image.decoding = "async";
+        if ("fetchPriority" in image && fetchPriority !== "auto") {
+            image.fetchPriority = fetchPriority;
+        }
+
+        image.onload = () => {
+            void finalizeImage();
+        };
+        image.onerror = () => {
+            if (isSettled) {
+                return;
+            }
+
+            isSettled = true;
+            reject(new Error(`Failed to load asset image: ${path}`));
+        };
+        image.src = path;
+
+        if (image.complete && image.naturalWidth > 0) {
+            void finalizeImage();
+        }
+    }).catch((error) => {
+        assetImagePromiseCache.delete(path);
+        throw error;
+    });
+
+    assetImagePromiseCache.set(path, imagePromise);
+    return imagePromise;
+}
+
+function cacheAssetNaturalSize(path, image) {
+    const width = image.naturalWidth || image.width;
+    const height = image.naturalHeight || image.height;
+    if (!width || !height) {
         return;
     }
 
-    preloadedAssetPaths.add(path);
-    const image = new Image();
+    assetNaturalSizeCache.set(path, { width, height });
+}
+
+function createAssetImage(path, className, {
+    alt = "",
+    decorative = false,
+    loading = "eager",
+    fetchPriority = "auto",
+} = {}) {
+    const image = document.createElement("img");
+    if (className) {
+        image.className = className;
+    }
+
     image.decoding = "async";
-    image.onload = image.onerror = () => {
-        pendingPreloadImages.delete(path);
-    };
+    image.loading = loading;
+    image.draggable = false;
+    if ("fetchPriority" in image && fetchPriority !== "auto") {
+        image.fetchPriority = fetchPriority;
+    }
+
+    const naturalSize = assetNaturalSizeCache.get(path);
+    if (naturalSize) {
+        image.width = naturalSize.width;
+        image.height = naturalSize.height;
+    }
+
     image.src = path;
-    pendingPreloadImages.set(path, image);
+
+    if (decorative) {
+        image.alt = "";
+        image.setAttribute("aria-hidden", "true");
+    } else {
+        image.alt = alt;
+    }
+
+    return image;
 }
 
 function PotionSidebar() {
@@ -1018,6 +1274,15 @@ function syncPotionListAccents() {
     });
 }
 
+function syncPotionListAccent(potionId) {
+    const button = document.querySelector(`[data-potion-id="${potionId}"]`);
+    if (!button) {
+        return;
+    }
+
+    button.style.setProperty("--potion-row-accent-rgb", getPotionAccentRgb(potionId));
+}
+
 function PotionListItem(potion, isSelected, index) {
     const button = document.createElement("button");
     button.type = "button";
@@ -1027,11 +1292,11 @@ function PotionListItem(potion, isSelected, index) {
     button.style.setProperty("--entry-delay", `${index * 24}ms`);
     button.style.setProperty("--potion-row-accent-rgb", getPotionAccentRgb(potion.id));
 
-    const navIcon = document.createElement("img");
-    navIcon.className = "potion-nav-icon";
-    navIcon.src = potion.navIcon;
-    navIcon.alt = "";
-    navIcon.setAttribute("aria-hidden", "true");
+    const navIcon = createAssetImage(potion.navIcon, "potion-nav-icon", {
+        decorative: true,
+        loading: "lazy",
+        fetchPriority: "low",
+    });
 
     const copy = document.createElement("span");
     copy.className = "potion-list-copy";
@@ -1044,11 +1309,19 @@ function PotionListItem(potion, isSelected, index) {
     button.append(navIcon, copy);
 
     button.addEventListener("click", () => {
-        selectPotion(potion.id);
+        void selectPotion(potion.id);
     });
 
     button.addEventListener("keydown", (event) => {
         handlePotionListItemKeydown(event, button);
+    });
+
+    button.addEventListener("mouseenter", () => {
+        warmPotionRenderAssets(potion);
+    });
+
+    button.addEventListener("focus", () => {
+        warmPotionRenderAssets(potion);
     });
 
     return button;
@@ -1060,10 +1333,13 @@ function PotionRecipePanel(potion) {
         return;
     }
 
-    applyPotionAccent(potion);
     panel.setAttribute("aria-label", `${potion.name} recipe`);
+    stopBubbleAnimation();
     panel.replaceChildren(RecipeFlowDiagram(potion));
+    startBubbleAnimation(getBubbleAnimationTargets(panel));
     applyLayoutTunerValues(state.layoutTunerValues);
+    applyPotionAccent(potion);
+    queueRecipeSlotFit();
 }
 
 function RecipeHeader(potion) {
@@ -1073,10 +1349,10 @@ function RecipeHeader(potion) {
     const iconShell = document.createElement("div");
     iconShell.className = "recipe-title-icon-shell";
 
-    const icon = document.createElement("img");
-    icon.className = "recipe-title-icon";
-    icon.src = potion.titleIcon;
-    icon.alt = `${potion.name} effect icon`;
+    const icon = createAssetImage(potion.titleIcon, "recipe-title-icon", {
+        alt: `${potion.name} effect icon`,
+        fetchPriority: "high",
+    });
     iconShell.append(icon);
 
     const textWrap = document.createElement("div");
@@ -1090,9 +1366,9 @@ function RecipeHeader(potion) {
     duration.className = "recipe-duration";
     duration.textContent = formatPotionDurationLabel(potion.duration);
 
-    textWrap.append(title, duration);
+    textWrap.append(title);
 
-    header.append(iconShell, textWrap);
+    header.append(iconShell, textWrap, duration);
     return header;
 }
 
@@ -1104,47 +1380,61 @@ function RecipeFlowDiagram(potion) {
     const titleHeader = RecipeHeader(potion);
     titleHeader.classList.add("recipe-flow-header");
 
+    const showcase = document.createElement("div");
+    showcase.className = "recipe-showcase";
+
+    const stageColumn = document.createElement("div");
+    stageColumn.className = "recipe-stage-column";
+
     const layoutArt = document.createElement("div");
     layoutArt.className = "flow-layout-art";
 
-    const layoutMain = document.createElement("img");
-    layoutMain.className = "flow-layout-main";
-    layoutMain.src = "./ui_elements/UI_main.png";
-    layoutMain.alt = "";
-    layoutMain.setAttribute("aria-hidden", "true");
+    const layoutMain = createAssetImage(UI_MAIN_ASSET_PATH, "flow-layout-main", {
+        decorative: true,
+        fetchPriority: "high",
+    });
+    const mainShell = document.createElement("div");
+    mainShell.className = "flow-layout-main-shell";
 
-    const layoutBubbles = document.createElement("img");
-    layoutBubbles.className = "flow-layout-bubbles";
-    layoutBubbles.src = "./ui_elements/UI_bubbles.png";
-    layoutBubbles.alt = "";
-    layoutBubbles.setAttribute("aria-hidden", "true");
+    const slotLayer = document.createElement("div");
+    slotLayer.className = "flow-slot-layer";
 
-    const layoutBottle = document.createElement("img");
-    layoutBottle.className = "flow-layout-bottle";
-    layoutBottle.src = getPotionBottleAsset(potion);
-    layoutBottle.alt = "";
-    layoutBottle.setAttribute("aria-hidden", "true");
+    const layoutBubbles = createBubbleAnimationStack();
 
-    const layoutArrow = document.createElement("img");
-    layoutArrow.className = "flow-layout-arrow";
-    layoutArrow.src = "./ui_elements/UI_arrow.png";
-    layoutArrow.alt = "";
-    layoutArrow.setAttribute("aria-hidden", "true");
+    const layoutBottle = createAssetImage(getPotionBottleAsset(potion), "flow-layout-bottle", {
+        decorative: true,
+        fetchPriority: "high",
+    });
 
-    const stack = document.createElement("div");
-    stack.className = "flow-stack";
-    const ingredientNode = createRecipeNode(flow.ingredient);
-    const baseNode = createRecipeNode(flow.basePotion);
+    const layoutArrow = createAssetImage(
+        UI_ARROW_FRAME_PATHS[bubbleAnimationFrameIndex % UI_ARROW_FRAME_PATHS.length],
+        "flow-layout-arrow",
+        {
+            decorative: true,
+            fetchPriority: "high",
+        }
+    );
+
+    const ingredientSlot = createFlowSlot(flow.ingredient, "top");
+    const baseSlot = createFlowSlot(flow.basePotion, "bottom");
+    const ingredientNode = ingredientSlot.querySelector(".recipe-node");
+    const baseNode = baseSlot.querySelector(".recipe-node");
     setFlowDelay(ingredientNode, 120);
     setFlowDelay(baseNode, 200);
-    stack.append(ingredientNode, baseNode);
-    layoutArt.append(layoutBubbles, layoutBottle, layoutMain, layoutArrow, stack);
+
+    slotLayer.append(ingredientSlot, baseSlot);
+    mainShell.append(layoutMain, slotLayer);
+    layoutArt.append(layoutBubbles, layoutBottle, mainShell, layoutArrow);
+    stageColumn.append(titleHeader, layoutArt);
 
     const modifierLane = document.createElement("div");
     modifierLane.className = "modifier-lane";
 
+    const modifierLaneShell = document.createElement("div");
+    modifierLaneShell.className = "modifier-lane-shell";
+
     (flow.modifiers || []).forEach((modifier, index) => {
-        const modifierRow = RecipeModifierRow(modifier);
+        const modifierRow = RecipeModifierRow(modifier, getModifierOutcomePotion(modifier, flow));
         setFlowDelay(modifierRow, 300 + (index * 90));
         modifierLane.append(modifierRow);
     });
@@ -1152,35 +1442,186 @@ function RecipeFlowDiagram(potion) {
     const finalPotionNode = createFinalPotionNode(flow.finalPotion);
     setFlowDelay(finalPotionNode, 420 + ((flow.modifiers || []).length * 90));
     modifierLane.append(finalPotionNode);
+    modifierLaneShell.append(modifierLane);
 
-    section.append(titleHeader, layoutArt, modifierLane);
+    stageColumn.append(modifierLaneShell);
+    showcase.append(stageColumn);
+    section.append(showcase);
     return section;
+}
+
+function createBubbleAnimationStack() {
+    const bubbleStack = document.createElement("div");
+    bubbleStack.className = "flow-layout-bubbles";
+    bubbleStack.setAttribute("aria-hidden", "true");
+
+    const frame = createAssetImage(UI_BUBBLE_FRAME_PATHS[bubbleAnimationFrameIndex], "flow-layout-bubble-frame", {
+        decorative: true,
+        fetchPriority: "high",
+    });
+
+    bubbleStack.append(frame);
+
+    return bubbleStack;
+}
+
+function getBubbleAnimationTargets(root) {
+    return [
+        createBubbleAnimationTarget(root?.querySelector(".flow-layout-bubble-frame"), UI_BUBBLE_FRAME_PATHS),
+        createBubbleAnimationTarget(root?.querySelector(".flow-layout-arrow"), UI_ARROW_FRAME_PATHS),
+    ].filter(Boolean);
+}
+
+function createBubbleAnimationTarget(frame, framePaths) {
+    if (!frame || !Array.isArray(framePaths) || framePaths.length === 0) {
+        return null;
+    }
+
+    return { frame, framePaths };
+}
+
+function startBubbleAnimation(targets) {
+    if (!Array.isArray(targets) || targets.length === 0) {
+        return;
+    }
+
+    stopBubbleAnimation();
+
+    if (shouldReduceBubbleMotion()) {
+        bubbleAnimationFrameIndex = 0;
+        syncBubbleAnimationFrame(targets);
+        return;
+    }
+
+    syncBubbleAnimationFrame(targets);
+    queueBubbleAnimationFrame(targets);
+}
+
+function stopBubbleAnimation() {
+    if (bubbleAnimationTimerId === null) {
+        return;
+    }
+
+    window.clearTimeout(bubbleAnimationTimerId);
+    bubbleAnimationTimerId = null;
+}
+
+function queueBubbleAnimationFrame(targets) {
+    bubbleAnimationTimerId = window.setTimeout(() => {
+        if (targets.some(({ frame }) => !frame.isConnected)) {
+            stopBubbleAnimation();
+            return;
+        }
+
+        bubbleAnimationFrameIndex = (bubbleAnimationFrameIndex + 1) % getBubbleAnimationFrameCount(targets);
+        syncBubbleAnimationFrame(targets);
+        queueBubbleAnimationFrame(targets);
+    }, getBubbleFrameDelay(bubbleAnimationFrameIndex, targets));
+}
+
+function getBubbleAnimationFrameCount(targets) {
+    return Math.max(1, targets.reduce((count, { framePaths }) => Math.max(count, framePaths.length), 0));
+}
+
+function getBubbleFrameDelay(frameIndex, targets) {
+    if (frameIndex === getBubbleAnimationFrameCount(targets) - 1) {
+        return BUBBLE_FINAL_FRAME_HOLD_MS;
+    }
+
+    return BUBBLE_FRAME_INTERVAL_MS;
+}
+
+function syncBubbleAnimationFrame(targets) {
+    targets.forEach(({ frame, framePaths }) => {
+        const nextFramePath = framePaths[bubbleAnimationFrameIndex % framePaths.length];
+        if (frame.getAttribute("src") !== nextFramePath) {
+            frame.src = nextFramePath;
+        }
+    });
+}
+
+function shouldReduceBubbleMotion() {
+    return typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
 function formatPotionDurationLabel(duration) {
     if (duration === "Instant") {
-        return "Instant effect";
+        return "Duration: Instant";
     }
 
     if (duration === "Base") {
-        return "Foundation brew";
+        return "Base potion";
     }
 
-    return `${duration} base duration`;
+    return `Duration: ${duration}`;
+}
+
+function isIngredientIconPath(path) {
+    return typeof path === "string" && path.includes("/ingredients/");
+}
+
+function getRecipeNodeSlotOffsetY(nodeData) {
+    if (nodeData?.name === "Awkward Potion") {
+        return -10;
+    }
+
+    return 0;
+}
+
+function createFlowSlot(nodeData, slotKey) {
+    const geometry = UI_MAIN_SLOT_GEOMETRY[slotKey];
+    const shell = document.createElement("div");
+    shell.className = `flow-slot flow-slot-${slotKey}`;
+
+    if (geometry) {
+        applyFlowSlotGeometry(shell, geometry);
+    }
+
+    const content = document.createElement("div");
+    content.className = "flow-slot-content";
+    content.setAttribute("data-slot-key", slotKey);
+
+    const node = createRecipeNode(nodeData);
+    content.append(node);
+    shell.append(content);
+    return shell;
+}
+
+function applyFlowSlotGeometry(element, geometry) {
+    if (!element || !geometry) {
+        return;
+    }
+
+    element.style.setProperty("--flow-slot-left", toPercentage(geometry.left, UI_MAIN_SOURCE_SIZE.width));
+    element.style.setProperty("--flow-slot-top", toPercentage(geometry.top, UI_MAIN_SOURCE_SIZE.height));
+    element.style.setProperty("--flow-slot-width", toPercentage(geometry.size, UI_MAIN_SOURCE_SIZE.width));
+    element.style.setProperty("--flow-slot-height", toPercentage(geometry.size, UI_MAIN_SOURCE_SIZE.height));
+    element.style.setProperty("--flow-slot-content-height", toPercentage(geometry.centeredContentHeight, geometry.size));
+}
+
+function toPercentage(value, total) {
+    return `${((value / total) * 100).toFixed(4)}%`;
 }
 
 function createRecipeNode(nodeData) {
     const node = document.createElement("article");
     node.className = "recipe-node";
+    node.dataset.iconPath = nodeData?.icon || "";
+    const slotOffsetY = getRecipeNodeSlotOffsetY(nodeData);
+    if (slotOffsetY !== 0) {
+        node.style.setProperty("--recipe-node-offset-y", `${slotOffsetY}px`);
+    }
 
     const iconShell = document.createElement("div");
     iconShell.className = "recipe-node-icon-shell";
+    if (isIngredientIconPath(nodeData?.icon)) {
+        iconShell.classList.add("has-ingredient-glow");
+    }
 
     if (nodeData?.icon) {
-        const icon = document.createElement("img");
-        icon.className = "recipe-node-icon";
-        icon.src = nodeData.icon;
-        icon.alt = `${nodeData.name} icon`;
+        const icon = createAssetImage(nodeData.icon, "recipe-node-icon", {
+            alt: `${nodeData.name} icon`,
+        });
         iconShell.append(icon);
     } else {
         iconShell.append(createIconFallback(nodeData?.name || "?"));
@@ -1196,9 +1637,15 @@ function createRecipeNode(nodeData) {
     return node;
 }
 
-function RecipeModifierRow(modifier) {
+function RecipeModifierRow(modifier, outcomePotion = null) {
     const row = document.createElement("article");
     row.className = "recipe-modifier-row";
+    if (outcomePotion) {
+        row.classList.add("has-outcome-preview");
+    }
+
+    const main = document.createElement("span");
+    main.className = "modifier-main";
 
     const prefix = document.createElement("span");
     prefix.className = "modifier-prefix";
@@ -1206,10 +1653,13 @@ function RecipeModifierRow(modifier) {
 
     const iconShell = document.createElement("span");
     iconShell.className = "modifier-icon-shell";
+    if (isIngredientIconPath(modifier?.icon)) {
+        iconShell.classList.add("has-ingredient-glow");
+    }
     if (modifier?.icon) {
-        const icon = document.createElement("img");
-        icon.src = modifier.icon;
-        icon.alt = modifier.label ? `${modifier.label} icon` : "";
+        const icon = createAssetImage(modifier.icon, "", {
+            alt: modifier.label ? `${modifier.label} icon` : "",
+        });
         iconShell.append(icon);
     } else {
         iconShell.append(createIconFallback(modifier?.label || "?"));
@@ -1230,8 +1680,75 @@ function RecipeModifierRow(modifier) {
         text.append(detail);
     }
 
-    row.append(prefix, iconShell, text);
+    main.append(prefix, iconShell, text);
+    row.append(main);
+
+    if (outcomePotion) {
+        row.append(createModifierOutcomePreview(outcomePotion));
+    }
+
     return row;
+}
+
+function getModifierOutcomePotion(modifier, flow) {
+    if ((modifier?.label || "").trim().toLowerCase() !== "gunpowder") {
+        return null;
+    }
+
+    if (!flow?.finalPotion?.icon || !flow?.finalPotion?.label) {
+        return null;
+    }
+
+    if (!flow.finalPotion.label.toLowerCase().startsWith("splash potion")) {
+        return null;
+    }
+
+    return flow.finalPotion;
+}
+
+function createModifierOutcomePreview(outcomePotion) {
+    const preview = document.createElement("span");
+    preview.className = "modifier-outcome-preview";
+
+    const connector = document.createElement("span");
+    connector.className = "modifier-outcome-connector";
+    connector.textContent = "->";
+    connector.setAttribute("aria-hidden", "true");
+
+    const shell = document.createElement("span");
+    shell.className = "modifier-outcome-shell";
+
+    const iconShell = document.createElement("span");
+    iconShell.className = "modifier-outcome-icon-shell";
+
+    if (outcomePotion?.icon) {
+        const icon = createAssetImage(outcomePotion.icon, "modifier-outcome-icon", {
+            alt: `${outcomePotion.label} icon`,
+        });
+        iconShell.append(icon);
+    } else {
+        iconShell.append(createIconFallback(outcomePotion?.label || "?"));
+    }
+
+    const text = document.createElement("span");
+    text.className = "modifier-outcome-text";
+
+    const prefix = document.createElement("span");
+    prefix.className = "modifier-outcome-prefix";
+    prefix.textContent = "Splash";
+
+    const label = document.createElement("span");
+    label.className = "modifier-outcome-label";
+    label.textContent = formatModifierOutcomeLabel(outcomePotion?.label || "");
+
+    text.append(prefix, label);
+    shell.append(iconShell, text);
+    preview.append(connector, shell);
+    return preview;
+}
+
+function formatModifierOutcomeLabel(label) {
+    return label.replace(/^Splash Potion of\s+/i, "").trim() || label;
 }
 
 function createFinalPotionNode(finalPotion) {
@@ -1242,10 +1759,9 @@ function createFinalPotionNode(finalPotion) {
     iconShell.className = "final-potion-icon-shell";
 
     if (finalPotion?.icon) {
-        const icon = document.createElement("img");
-        icon.className = "final-potion-icon";
-        icon.src = finalPotion.icon;
-        icon.alt = `${finalPotion.label} icon`;
+        const icon = createAssetImage(finalPotion.icon, "final-potion-icon", {
+            alt: `${finalPotion.label} icon`,
+        });
         iconShell.append(icon);
     } else {
         iconShell.append(createIconFallback(finalPotion?.label || "?"));
@@ -1282,11 +1798,192 @@ function createIconFallback(name) {
     return fallback;
 }
 
+function initializeRecipeSlotFitUpdates() {
+    window.addEventListener("resize", () => {
+        queueRecipeSlotFit();
+    });
+
+    if (document.fonts?.ready && typeof document.fonts.ready.then === "function") {
+        void document.fonts.ready.then(() => {
+            queueRecipeSlotFit();
+        }).catch(() => {
+            // Ignore font readiness failures and keep the current slot fit.
+        });
+    }
+}
+
+function queueRecipeSlotFit() {
+    if (recipeSlotFitFrameId !== null) {
+        window.cancelAnimationFrame(recipeSlotFitFrameId);
+    }
+
+    recipeSlotFitFrameId = window.requestAnimationFrame(() => {
+        recipeSlotFitFrameId = null;
+        fitRecipeSlotNodes();
+    });
+}
+
+function fitRecipeSlotNodes() {
+    const nodes = document.querySelectorAll(".flow-slot-content .recipe-node");
+    nodes.forEach((node) => {
+        fitRecipeSlotNode(node);
+    });
+}
+
+function fitRecipeSlotNode(node) {
+    const slot = node?.closest(".flow-slot-content");
+    const label = node?.querySelector(".recipe-node-label");
+    if (!slot || !label) {
+        return;
+    }
+
+    node.style.removeProperty("--recipe-node-icon-size");
+    node.removeAttribute("data-label-lines");
+
+    const slotRect = slot.getBoundingClientRect();
+    if (!slotRect.width || !slotRect.height) {
+        return;
+    }
+
+    const labelRect = label.getBoundingClientRect();
+    const nodeStyles = window.getComputedStyle(node);
+    const labelStyles = window.getComputedStyle(label);
+    const gap = parseFloat(nodeStyles.rowGap || nodeStyles.gap) || 0;
+    const lineHeight = parseFloat(labelStyles.lineHeight) || labelRect.height || 0;
+    const lineCount = Math.max(1, Math.round(labelRect.height / Math.max(lineHeight, 1)));
+    const isIngredientNode = isIngredientIconPath(node.dataset.iconPath);
+    const effectiveLabelHeight = isIngredientNode
+        ? measureMaxIngredientLabelHeight(label, slotRect.width)
+        : labelRect.height;
+    const availableIconBoxSize = Math.max(
+        RECIPE_SLOT_MIN_ICON_SIZE,
+        Math.min(slotRect.width, slotRect.height - effectiveLabelHeight - gap)
+    );
+    const targetVisibleSize = Math.min(
+        slotRect.width * RECIPE_SLOT_TARGET_VISIBLE_WIDTH_RATIO,
+        slotRect.height * RECIPE_SLOT_TARGET_VISIBLE_HEIGHT_RATIO
+    );
+    const visibleBoundsRatio = isIngredientNode ? ingredientSlotLargestVisibleBoundsRatio : 1;
+    const iconSize = Math.max(
+        RECIPE_SLOT_MIN_ICON_SIZE,
+        Math.min(availableIconBoxSize, targetVisibleSize / Math.max(visibleBoundsRatio, 0.01))
+    );
+
+    node.dataset.labelLines = String(lineCount);
+    node.style.setProperty("--recipe-node-icon-size", `${Math.floor(iconSize)}px`);
+}
+
+function measureMaxIngredientLabelHeight(referenceLabel, maxWidth) {
+    const cacheKey = getIngredientLabelHeightCacheKey(referenceLabel, maxWidth);
+    const cachedHeight = ingredientLabelHeightCache.get(cacheKey);
+    if (typeof cachedHeight === "number") {
+        return cachedHeight;
+    }
+
+    const measurement = document.createElement("div");
+    measurement.className = referenceLabel.className;
+    measurement.setAttribute("aria-hidden", "true");
+    measurement.style.position = "fixed";
+    measurement.style.left = "0";
+    measurement.style.top = "0";
+    measurement.style.width = `${maxWidth}px`;
+    measurement.style.maxWidth = `${maxWidth}px`;
+    measurement.style.visibility = "hidden";
+    measurement.style.pointerEvents = "none";
+    measurement.style.zIndex = "-1";
+
+    document.body.append(measurement);
+
+    let largestHeight = 0;
+    getRecipeIngredientLabels().forEach((ingredientLabel) => {
+        measurement.textContent = ingredientLabel;
+        largestHeight = Math.max(largestHeight, measurement.getBoundingClientRect().height);
+    });
+
+    measurement.remove();
+    const fallbackHeight = referenceLabel.getBoundingClientRect().height;
+    const resolvedHeight = largestHeight || fallbackHeight;
+    ingredientLabelHeightCache.set(cacheKey, resolvedHeight);
+    return resolvedHeight;
+}
+
+function getIngredientLabelHeightCacheKey(referenceLabel, maxWidth) {
+    const styles = window.getComputedStyle(referenceLabel);
+    return [
+        Math.round(maxWidth),
+        styles.fontFamily,
+        styles.fontSize,
+        styles.fontWeight,
+        styles.letterSpacing,
+        styles.lineHeight,
+        styles.textTransform,
+    ].join("|");
+}
+
+function getAssetVisibleBoundsRatio(path, image) {
+    if (!path || !image) {
+        return 1;
+    }
+
+    const cachedRatio = assetVisibleBoundsRatioCache.get(path);
+    if (typeof cachedRatio === "number") {
+        return cachedRatio;
+    }
+
+    const width = image.naturalWidth || image.width;
+    const height = image.naturalHeight || image.height;
+    if (!width || !height) {
+        return 1;
+    }
+
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+
+    const context = canvas.getContext("2d", { willReadFrequently: true });
+    if (!context) {
+        return 1;
+    }
+
+    context.drawImage(image, 0, 0, width, height);
+    const data = context.getImageData(0, 0, width, height).data;
+
+    let minX = width;
+    let minY = height;
+    let maxX = -1;
+    let maxY = -1;
+
+    for (let index = 0; index < data.length; index += 4) {
+        if (data[index + 3] < 12) {
+            continue;
+        }
+
+        const pixelIndex = index / 4;
+        const x = pixelIndex % width;
+        const y = Math.floor(pixelIndex / width);
+        minX = Math.min(minX, x);
+        minY = Math.min(minY, y);
+        maxX = Math.max(maxX, x);
+        maxY = Math.max(maxY, y);
+    }
+
+    if (maxX === -1 || maxY === -1) {
+        assetVisibleBoundsRatioCache.set(path, 1);
+        return 1;
+    }
+
+    const visibleWidthRatio = (maxX - minX + 1) / width;
+    const visibleHeightRatio = (maxY - minY + 1) / height;
+    const ratio = Math.max(visibleWidthRatio, visibleHeightRatio);
+    assetVisibleBoundsRatioCache.set(path, ratio);
+    return ratio;
+}
+
 function getSelectedPotion() {
     return POTION_RECIPES.find(potion => potion.id === state.selectedPotionId) || POTION_RECIPES[0];
 }
 
-function selectPotion(nextPotionId) {
+async function selectPotion(nextPotionId) {
     if (state.selectedPotionId === nextPotionId) {
         return;
     }
@@ -1294,7 +1991,23 @@ function selectPotion(nextPotionId) {
     const previousPotionId = state.selectedPotionId;
     state.selectedPotionId = nextPotionId;
     syncPotionListSelection(previousPotionId, nextPotionId);
-    PotionRecipePanel(getSelectedPotion());
+
+    const panel = document.getElementById("recipe-panel");
+    const nextPotion = POTION_RECIPES.find((potion) => potion.id === nextPotionId) || getSelectedPotion();
+    const renderRequestId = ++recipePanelRenderRequestId;
+
+    if (panel) {
+        panel.setAttribute("aria-busy", "true");
+    }
+
+    await ensurePotionRenderAssets(nextPotion);
+
+    if (renderRequestId !== recipePanelRenderRequestId || state.selectedPotionId !== nextPotionId) {
+        return;
+    }
+
+    PotionRecipePanel(nextPotion);
+    panel?.removeAttribute("aria-busy");
 }
 
 function syncPotionListSelection(previousPotionId, nextPotionId) {
