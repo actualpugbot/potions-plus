@@ -58,7 +58,7 @@ const UI_MAIN_SLOT_GEOMETRY = {
     },
     bottom: {
         left: 20,
-        top: 723,
+        top: 760,
         size: 482,
         centeredContentHeight: 415,
     },
@@ -990,7 +990,10 @@ function collectPotionAssetPaths(recipes) {
         addAssetPath(paths, potion.flow?.ingredient?.icon);
         addAssetPath(paths, potion.flow?.basePotion?.icon);
         addAssetPath(paths, potion.flow?.finalPotion?.icon);
-        potion.flow?.modifiers?.forEach((modifier) => addAssetPath(paths, modifier.icon));
+        potion.flow?.modifiers?.forEach((modifier) => {
+            addAssetPath(paths, modifier.icon);
+            getModifierOutcomeIcons(potion, modifier, potion.flow).forEach(({ path }) => addAssetPath(paths, path));
+        });
     });
     return [...paths];
 }
@@ -1003,7 +1006,10 @@ function collectPotionRenderAssetPaths(potion) {
     addAssetPath(paths, potion?.flow?.ingredient?.icon);
     addAssetPath(paths, potion?.flow?.basePotion?.icon);
     addAssetPath(paths, potion?.flow?.finalPotion?.icon);
-    potion?.flow?.modifiers?.forEach((modifier) => addAssetPath(paths, modifier.icon));
+    potion?.flow?.modifiers?.forEach((modifier) => {
+        addAssetPath(paths, modifier.icon);
+        getModifierOutcomeIcons(potion, modifier, potion?.flow).forEach(({ path }) => addAssetPath(paths, path));
+    });
     return [...paths];
 }
 
@@ -1346,6 +1352,9 @@ function RecipeHeader(potion) {
     const header = document.createElement("header");
     header.className = "recipe-header";
 
+    const titleRow = document.createElement("div");
+    titleRow.className = "recipe-title-row";
+
     const iconShell = document.createElement("div");
     iconShell.className = "recipe-title-icon-shell";
 
@@ -1358,22 +1367,32 @@ function RecipeHeader(potion) {
     const textWrap = document.createElement("div");
     textWrap.className = "recipe-title-block";
 
+    const prefix = document.createElement("p");
+    prefix.className = "recipe-title-prefix";
+    prefix.textContent = "Potion of";
+
     const title = document.createElement("h2");
     title.className = "recipe-title";
     title.textContent = potion.name;
+
+    const spacer = document.createElement("div");
+    spacer.className = "recipe-title-spacer";
+    spacer.setAttribute("aria-hidden", "true");
 
     const duration = document.createElement("p");
     duration.className = "recipe-duration";
     duration.textContent = formatPotionDurationLabel(potion.duration);
 
-    textWrap.append(title);
+    textWrap.append(prefix, title);
+    titleRow.append(iconShell, textWrap, spacer);
 
-    header.append(iconShell, textWrap, duration);
+    header.append(titleRow, duration);
     return header;
 }
 
 function RecipeFlowDiagram(potion) {
     const flow = potion.flow;
+    const modifiers = flow.modifiers || [];
     const section = document.createElement("section");
     section.className = "recipe-flow-diagram";
 
@@ -1433,15 +1452,17 @@ function RecipeFlowDiagram(potion) {
     const modifierLaneShell = document.createElement("div");
     modifierLaneShell.className = "modifier-lane-shell";
 
-    (flow.modifiers || []).forEach((modifier, index) => {
-        const modifierRow = RecipeModifierRow(modifier, getModifierOutcomePotion(modifier, flow));
+    modifiers.forEach((modifier, index) => {
+        const modifierRow = RecipeModifierRow(modifier, getModifierOutcomeData(potion, modifier, flow));
         setFlowDelay(modifierRow, 300 + (index * 90));
         modifierLane.append(modifierRow);
     });
 
-    const finalPotionNode = createFinalPotionNode(flow.finalPotion);
-    setFlowDelay(finalPotionNode, 420 + ((flow.modifiers || []).length * 90));
-    modifierLane.append(finalPotionNode);
+    if (modifiers.length === 0) {
+        const finalPotionNode = createFinalPotionNode(flow.finalPotion);
+        setFlowDelay(finalPotionNode, 420);
+        modifierLane.append(finalPotionNode);
+    }
     modifierLaneShell.append(modifierLane);
 
     stageColumn.append(modifierLaneShell);
@@ -1637,118 +1658,135 @@ function createRecipeNode(nodeData) {
     return node;
 }
 
-function RecipeModifierRow(modifier, outcomePotion = null) {
+function RecipeModifierRow(modifier, outcome = null) {
     const row = document.createElement("article");
     row.className = "recipe-modifier-row";
-    if (outcomePotion) {
-        row.classList.add("has-outcome-preview");
-    }
 
-    const main = document.createElement("span");
+    const main = document.createElement("div");
     main.className = "modifier-main";
 
     const prefix = document.createElement("span");
     prefix.className = "modifier-prefix";
     prefix.textContent = "+";
 
-    const iconShell = document.createElement("span");
-    iconShell.className = "modifier-icon-shell";
-    if (isIngredientIconPath(modifier?.icon)) {
-        iconShell.classList.add("has-ingredient-glow");
-    }
-    if (modifier?.icon) {
-        const icon = createAssetImage(modifier.icon, "", {
-            alt: modifier.label ? `${modifier.label} icon` : "",
-        });
-        iconShell.append(icon);
-    } else {
-        iconShell.append(createIconFallback(modifier?.label || "?"));
-    }
-
-    const text = document.createElement("span");
-    text.className = "modifier-text";
-
-    const label = document.createElement("span");
-    label.className = "modifier-label";
-    label.textContent = modifier?.label || "";
-    text.append(label);
-
-    if (modifier?.detail) {
-        const detail = document.createElement("span");
-        detail.className = "modifier-detail";
-        detail.textContent = modifier.detail;
-        text.append(detail);
-    }
-
-    main.append(prefix, iconShell, text);
+    main.append(prefix, createModifierIngredientNode(modifier));
     row.append(main);
 
-    if (outcomePotion) {
-        row.append(createModifierOutcomePreview(outcomePotion));
+    if (outcome) {
+        row.append(createModifierOutcome(outcome));
     }
 
     return row;
 }
 
-function getModifierOutcomePotion(modifier, flow) {
-    if ((modifier?.label || "").trim().toLowerCase() !== "gunpowder") {
-        return null;
-    }
-
-    if (!flow?.finalPotion?.icon || !flow?.finalPotion?.label) {
-        return null;
-    }
-
-    if (!flow.finalPotion.label.toLowerCase().startsWith("splash potion")) {
-        return null;
-    }
-
-    return flow.finalPotion;
+function createModifierIngredientNode(modifier) {
+    const node = createRecipeNode({
+        name: modifier?.label || "",
+        icon: modifier?.icon || "",
+    });
+    node.classList.add("modifier-ingredient-node");
+    return node;
 }
 
-function createModifierOutcomePreview(outcomePotion) {
-    const preview = document.createElement("span");
-    preview.className = "modifier-outcome-preview";
-
-    const connector = document.createElement("span");
-    connector.className = "modifier-outcome-connector";
-    connector.textContent = "->";
-    connector.setAttribute("aria-hidden", "true");
-
-    const shell = document.createElement("span");
-    shell.className = "modifier-outcome-shell";
-
-    const iconShell = document.createElement("span");
-    iconShell.className = "modifier-outcome-icon-shell";
-
-    if (outcomePotion?.icon) {
-        const icon = createAssetImage(outcomePotion.icon, "modifier-outcome-icon", {
-            alt: `${outcomePotion.label} icon`,
-        });
-        iconShell.append(icon);
-    } else {
-        iconShell.append(createIconFallback(outcomePotion?.label || "?"));
+function getModifierOutcomeData(potion, modifier, flow) {
+    const text = getModifierOutcomeText(modifier, flow);
+    const icons = getModifierOutcomeIcons(potion, modifier, flow);
+    if (!text && icons.length === 0) {
+        return null;
     }
 
-    const text = document.createElement("span");
-    text.className = "modifier-outcome-text";
+    return { text, icons };
+}
 
-    const prefix = document.createElement("span");
-    prefix.className = "modifier-outcome-prefix";
-    prefix.textContent = "Splash";
+function getModifierOutcomeText(modifier, flow) {
+    if (isGunpowderModifier(modifier)) {
+        return flow?.finalPotion?.label || "";
+    }
 
-    const label = document.createElement("span");
+    return modifier?.detail || "";
+}
+
+function getModifierOutcomeIcons(potion, modifier, flow) {
+    if (isGunpowderModifier(modifier)) {
+        if (!flow?.finalPotion?.icon || !flow?.finalPotion?.label) {
+            return [];
+        }
+
+        return [
+            {
+                path: flow.finalPotion.icon,
+                alt: `${flow.finalPotion.label} icon`,
+                kind: "potion",
+            },
+        ];
+    }
+
+    if (potion?.id === "turtle-master") {
+        return [
+            { path: ASSETS.effects.slowness, alt: "Slowness effect icon", kind: "effect" },
+            { path: ASSETS.effects.turtleMaster, alt: "Resistance effect icon", kind: "effect" },
+        ];
+    }
+
+    if (isGlowstoneModifier(modifier) && potion?.id === "healing") {
+        return [{ path: ASSETS.effects.healing, alt: "Healing effect icon", kind: "effect" }];
+    }
+
+    if (isGlowstoneModifier(modifier) && potion?.id === "harming") {
+        return [{ path: ASSETS.effects.harming, alt: "Harming effect icon", kind: "effect" }];
+    }
+
+    return [];
+}
+
+function isGunpowderModifier(modifier) {
+    return normalizeModifierLabel(modifier?.label) === "gunpowder";
+}
+
+function isGlowstoneModifier(modifier) {
+    return normalizeModifierLabel(modifier?.label) === "glowstone dust";
+}
+
+function normalizeModifierLabel(label) {
+    return (label || "").trim().toLowerCase();
+}
+
+function createModifierOutcome(outcome) {
+    const container = document.createElement("div");
+    container.className = "modifier-outcome";
+    if (outcome?.icons?.some((iconData) => iconData?.kind === "potion")) {
+        container.classList.add("has-potion-result-icon");
+    }
+
+    const label = document.createElement("p");
     label.className = "modifier-outcome-label";
-    label.textContent = formatModifierOutcomeLabel(outcomePotion?.label || "");
+    label.textContent = outcome?.text || "";
+    container.append(label);
 
-    text.append(prefix, label);
-    shell.append(iconShell, text);
-    preview.append(connector, shell);
-    return preview;
-}
+    if (outcome?.icons?.length) {
+        const iconGroup = document.createElement("div");
+        iconGroup.className = "modifier-result-icons";
 
-function formatModifierOutcomeLabel(label) {
-    return label.replace(/^Splash Potion of\s+/i, "").trim() || label;
+        outcome.icons.forEach((iconData) => {
+            const shell = document.createElement("span");
+            shell.className = `modifier-result-icon-shell modifier-result-icon-shell-${iconData.kind || "effect"}`;
+
+            if (iconData?.path) {
+                const icon = createAssetImage(iconData.path, "modifier-result-icon", {
+                    alt: iconData.alt || "",
+                });
+                shell.append(icon);
+            } else {
+                shell.append(createIconFallback(iconData?.alt || "?"));
+            }
+
+            iconGroup.append(shell);
+        });
+
+        container.append(iconGroup);
+    }
+
+    return container;
 }
 
 function createFinalPotionNode(finalPotion) {
