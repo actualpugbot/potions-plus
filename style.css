@@ -444,12 +444,68 @@ html[data-theme="light"] .theme-toggle-thumb {
     z-index: 1;
 }
 
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 .potion-list {
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
     min-height: 0;
     padding: 0.25rem 1rem 0 0.35rem;
+}
+
+.potion-list-loading {
+    pointer-events: none;
+}
+
+.potion-list-skeleton-item,
+.recipe-loading-icon,
+.recipe-loading-kicker,
+.recipe-loading-title,
+.recipe-loading-art,
+.recipe-loading-step {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgb(var(--potion-accent-rgb) / 0.14);
+    background:
+        linear-gradient(135deg, rgb(var(--potion-accent-rgb) / 0.13) 0%, rgba(255, 255, 255, 0.04) 56%, rgba(255, 255, 255, 0.02) 100%);
+}
+
+.potion-list-skeleton-item::after,
+.recipe-loading-icon::after,
+.recipe-loading-kicker::after,
+.recipe-loading-title::after,
+.recipe-loading-art::after,
+.recipe-loading-step::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgb(255 255 255 / 0.02) 28%, rgb(255 255 255 / 0.18) 52%, rgb(255 255 255 / 0.02) 72%, transparent 100%);
+    transform: translateX(-100%);
+    animation: skeleton-shimmer 1.15s ease-in-out infinite;
+}
+
+.potion-list-skeleton-item {
+    min-height: 68px;
+    border-radius: 18px;
+}
+
+.potion-list-skeleton-item:nth-child(3n + 2) {
+    width: calc(100% - 1rem);
+}
+
+.potion-list-skeleton-item:nth-child(3n) {
+    width: calc(100% - 2rem);
 }
 
 .potion-list-item {
@@ -662,6 +718,74 @@ html[data-theme="light"] .recipe-panel::after {
 .recipe-panel > * {
     position: relative;
     z-index: 1;
+}
+
+.recipe-panel-loading {
+    min-height: clamp(34rem, 72vh, 48rem);
+}
+
+.recipe-loading-shell {
+    display: grid;
+    gap: 1.35rem;
+}
+
+.recipe-loading-header {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 1rem;
+}
+
+.recipe-loading-icon {
+    width: 78px;
+    height: 78px;
+    border-radius: 50%;
+}
+
+.recipe-loading-copy {
+    display: grid;
+    gap: 0.72rem;
+}
+
+.recipe-loading-kicker {
+    width: min(12rem, 54%);
+    height: 0.85rem;
+    border-radius: 999px;
+}
+
+.recipe-loading-title {
+    width: min(24rem, 100%);
+    height: clamp(2.4rem, 4vw, 3.4rem);
+    border-radius: 24px;
+}
+
+.recipe-loading-art {
+    width: min(100%, 480px);
+    aspect-ratio: 1326 / 1226;
+    margin-inline: auto;
+    border-radius: 28px;
+}
+
+.recipe-loading-steps {
+    display: grid;
+    gap: 0.82rem;
+    width: min(100%, 32rem);
+    margin-inline: auto;
+}
+
+.recipe-loading-step {
+    display: block;
+    width: 100%;
+    height: 1.05rem;
+    border-radius: 999px;
+}
+
+.recipe-loading-step:nth-child(2) {
+    width: 84%;
+}
+
+.recipe-loading-step:nth-child(3) {
+    width: 72%;
 }
 
 .potion-inline-link {
@@ -1058,6 +1182,12 @@ html[data-theme="light"] .flow-layout-bottle {
     transform-origin: center;
 }
 
+.flow-slot-bottom,
+.flow-slot-bottom .flow-slot-content,
+.flow-slot-bottom .recipe-node-link {
+    pointer-events: auto;
+}
+
 .recipe-node {
     display: flex;
     width: 100%;
@@ -1087,6 +1217,7 @@ html[data-theme="light"] .flow-layout-bottle {
 
 .recipe-node-link {
     color: inherit;
+    cursor: pointer;
     text-decoration: none;
     transition: transform 0.18s ease, filter 0.18s ease;
 }
@@ -1105,14 +1236,6 @@ html[data-theme="light"] .flow-layout-bottle {
     display: grid;
     place-items: center;
     isolation: isolate;
-}
-
-.recipe-node-icon-shell.has-ingredient-glow {
-    --ingredient-glow-size: calc(var(--recipe-node-icon-size, var(--ui-slot-icon-size)) * 0.92);
-}
-
-.recipe-node-icon-shell.has-ingredient-glow::before {
-    content: none;
 }
 
 .recipe-node-icon {
@@ -1494,6 +1617,12 @@ html[data-theme="light"] .modifier-prefix {
     height: 46px;
 }
 
+/* Splash bottle art sits a touch left in the source PNGs, so nudge it for steadier visual spacing. */
+.modifier-result-icon.is-splash-potion-image,
+.final-potion-icon.is-splash-potion-image {
+    translate: 4px 0;
+}
+
 .final-potion-node {
     display: flex;
     align-items: center;
@@ -1725,6 +1854,17 @@ html[data-theme="light"] .layout-tuner-output {
     border-color: rgba(116, 151, 196, 0.45);
 }
 
+html[data-theme="light"] .potion-list-skeleton-item,
+html[data-theme="light"] .recipe-loading-icon,
+html[data-theme="light"] .recipe-loading-kicker,
+html[data-theme="light"] .recipe-loading-title,
+html[data-theme="light"] .recipe-loading-art,
+html[data-theme="light"] .recipe-loading-step {
+    border-color: rgba(95, 135, 191, 0.22);
+    background:
+        linear-gradient(135deg, rgb(var(--potion-accent-rgb) / 0.12) 0%, rgba(255, 255, 255, 0.95) 58%, rgba(231, 240, 249, 0.88) 100%);
+}
+
 @keyframes rise-in {
     from {
         opacity: 0;
@@ -1742,6 +1882,12 @@ html[data-theme="light"] .layout-tuner-output {
     }
     to {
         background-position: 14% 18%, 86% 10%, 54% 82%, center;
+    }
+}
+
+@keyframes skeleton-shimmer {
+    to {
+        transform: translateX(100%);
     }
 }
 
@@ -1988,6 +2134,10 @@ html[data-theme="light"] .layout-tuner-output {
         border-radius: 28px;
     }
 
+    .recipe-panel-loading {
+        min-height: 28rem;
+    }
+
     .recipe-flow-diagram {
         --ui-slot-icon-size: clamp(30px, 8.2vw, 42px);
         --ui-slot-label-size: clamp(0.72rem, 2.4vw, 0.84rem);
@@ -2018,12 +2168,30 @@ html[data-theme="light"] .layout-tuner-output {
     .recipe-title {
         font-size: clamp(1rem, 4vw, 1.45rem);
     }
+
     .recipe-title-prefix {
         letter-spacing: 0.18em;
     }
 
     .recipe-duration {
         font-size: 1rem;
+    }
+
+    .recipe-loading-header {
+        gap: 0.72rem;
+    }
+
+    .recipe-loading-icon {
+        width: 58px;
+        height: 58px;
+    }
+
+    .recipe-loading-kicker {
+        width: 70%;
+    }
+
+    .recipe-loading-title {
+        height: 2rem;
     }
 
     .flow-layout-art {

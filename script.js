@@ -2,6 +2,9 @@ const DEFAULT_POTION_ID = "fire-resistance";
 const URL_POTION_PARAM = "potion";
 const STORAGE_THEME_KEY = "potion-guide-theme";
 const SITE_URL = "https://actualpugbot.github.io/potions-plus/";
+const APP_STATE_ATTRIBUTE = "data-app-state";
+const APP_STATE_RENDERED = "rendered";
+const APP_STATE_READY = "ready";
 const LAYOUT_TUNER_OFFSET_RANGE = {
     min: -180,
     max: 180,
@@ -554,7 +557,6 @@ const POTION_RECIPES = [
             ingredient: { name: "Slime Block", icon: ASSETS.ingredients.slimeBlock },
             basePotion: { name: "Awkward Potion", icon: ASSETS.potions.waterBottle },
             modifiers: [
-                { label: "Redstone Dust", icon: ASSETS.ingredients.redstoneDust, detail: "+5:00 [8:00 total]" },
                 { label: "Gunpowder", icon: ASSETS.ingredients.gunpowder, detail: "" },
             ],
             finalPotion: { label: "Splash Potion of Oozing", icon: ASSETS.splashPotions.oozing },
@@ -570,7 +572,6 @@ const POTION_RECIPES = [
             ingredient: { name: "Cobweb", icon: ASSETS.ingredients.cobweb },
             basePotion: { name: "Awkward Potion", icon: ASSETS.potions.waterBottle },
             modifiers: [
-                { label: "Redstone Dust", icon: ASSETS.ingredients.redstoneDust, detail: "+5:00 [8:00 total]" },
                 { label: "Gunpowder", icon: ASSETS.ingredients.gunpowder, detail: "" },
             ],
             finalPotion: { label: "Splash Potion of Weaving", icon: ASSETS.splashPotions.weaving },
@@ -586,7 +587,6 @@ const POTION_RECIPES = [
             ingredient: { name: "Breeze Rod", icon: ASSETS.ingredients.breezeRod },
             basePotion: { name: "Awkward Potion", icon: ASSETS.potions.waterBottle },
             modifiers: [
-                { label: "Redstone Dust", icon: ASSETS.ingredients.redstoneDust, detail: "+5:00 [8:00 total]" },
                 { label: "Gunpowder", icon: ASSETS.ingredients.gunpowder, detail: "" },
             ],
             finalPotion: { label: "Splash Potion of Wind Charging", icon: ASSETS.splashPotions.windCharging },
@@ -615,7 +615,6 @@ const POTION_RECIPES = [
             ingredient: { name: "Stone", icon: ASSETS.ingredients.stone },
             basePotion: { name: "Awkward Potion", icon: ASSETS.potions.waterBottle },
             modifiers: [
-                { label: "Redstone Dust", icon: ASSETS.ingredients.redstoneDust, detail: "+5:00 [8:00 total]" },
                 { label: "Gunpowder", icon: ASSETS.ingredients.gunpowder, detail: "" },
             ],
             finalPotion: { label: "Splash Potion of Infestation", icon: ASSETS.splashPotions.infestation },
@@ -650,7 +649,6 @@ const potionAccentRgbCache = new Map();
 let backgroundAssetQueueIsRunning = false;
 let bubbleAnimationTimerId = null;
 let bubbleAnimationFrameIndex = 0;
-let recipePanelRenderRequestId = 0;
 let recipeSlotFitFrameId = null;
 let ingredientSlotScaleReadyPromise = null;
 let ingredientSlotLargestVisibleBoundsRatio = 1;
@@ -662,6 +660,10 @@ document.addEventListener("DOMContentLoaded", () => {
     initializeRecipeSlotFitUpdates();
     void initializePotionGuide();
 });
+
+function setDocumentAppState(stateValue) {
+    document.documentElement.setAttribute(APP_STATE_ATTRIBUTE, stateValue);
+}
 
 function initializeSelectedPotionFromLocation() {
     state.selectedPotionId = getPotionIdFromLocation();
@@ -900,18 +902,25 @@ function createPotionStructuredDataSteps(potion) {
 
 async function initializePotionGuide() {
     const selectedPotion = getSelectedPotion();
-    await Promise.all([
-        ensurePotionRenderAssets(selectedPotion),
-        ensureIngredientSlotScaleReady(),
-        primeInitialPotionAccent(),
-    ]);
     PotionGuidePage();
     syncPotionPageMetadata(selectedPotion);
-    warmPotionAssetsInBackground(selectedPotion);
-    void primePotionAccents();
     if (shouldEnableLayoutTuner()) {
         initializeLayoutTuner();
     }
+
+    setDocumentAppState(APP_STATE_RENDERED);
+    await waitForNextPaint();
+    void hydratePotionGuide(selectedPotion.id);
+}
+
+async function hydratePotionGuide(initialPotionId) {
+    await waitForBrowserIdle();
+
+    const selectedPotion = getPotionById(initialPotionId) || getSelectedPotion();
+    warmPotionAssetsInBackground(selectedPotion);
+    void ensureIngredientSlotScaleReady();
+    void primePotionAccents();
+    setDocumentAppState(APP_STATE_READY);
 }
 
 function getPotionAccentRgb(potionId) {
@@ -954,12 +963,6 @@ async function primePotionAccents() {
     applyPotionAccent(getSelectedPotion());
 }
 
-async function primeInitialPotionAccent() {
-    const selectedPotion = getSelectedPotion();
-    const rgb = await resolvePotionAccentRgb(selectedPotion);
-    applyPotionAccentRgb(rgb);
-}
-
 async function resolvePotionAccentRgb(potion) {
     if (!potion) {
         return DEFAULT_POTION_ACCENT_RGB;
@@ -984,7 +987,7 @@ async function resolvePotionAccentRgb(potion) {
 }
 
 function loadAccentImage(path) {
-    return loadAssetImage(path, { fetchPriority: "high" });
+    return loadAssetImage(path, { fetchPriority: "low" });
 }
 
 function samplePotionBottleCenterRgb(image) {
@@ -1519,11 +1522,6 @@ async function copyTextToClipboard(text) {
     return true;
 }
 
-async function ensurePotionRenderAssets(potion) {
-    const assetPaths = collectPotionRenderAssetPaths(potion);
-    await Promise.allSettled(assetPaths.map((path) => loadAssetImage(path, { fetchPriority: "high" })));
-}
-
 function collectPotionAssetPaths(recipes) {
     const paths = new Set();
     UI_LAYOUT_ASSET_PATHS.forEach((path) => addAssetPath(paths, path));
@@ -1575,6 +1573,10 @@ function getPotionBottleAsset(potion) {
 
 function normalizePotionIdToAssetKey(id) {
     return (id || "").replace(/-([a-z])/g, (_match, letter) => letter.toUpperCase());
+}
+
+function isSplashPotionAssetPath(path) {
+    return typeof path === "string" && path.includes("/splash_potion_");
 }
 
 function addAssetPath(paths, path) {
@@ -1657,7 +1659,7 @@ function ensureIngredientSlotScaleReady() {
     ingredientSlotScaleReadyPromise = Promise.all(
         ingredientPaths.map(async (path) => {
             try {
-                const image = await loadAssetImage(path, { fetchPriority: "high" });
+                const image = await loadAssetImage(path, { fetchPriority: "low" });
                 return getAssetVisibleBoundsRatio(path, image);
             } catch (_error) {
                 return 1;
@@ -1775,6 +1777,9 @@ function createAssetImage(path, className, {
     if (className) {
         image.className = className;
     }
+    if (isSplashPotionAssetPath(path)) {
+        image.classList.add("is-splash-potion-image");
+    }
 
     image.decoding = "async";
     image.loading = loading;
@@ -1840,6 +1845,8 @@ function PotionSidebar() {
         return;
     }
 
+    listElement.classList.remove("potion-list-loading");
+    listElement.removeAttribute("aria-hidden");
     listElement.replaceChildren(
         ...POTION_RECIPES.map((potion, index) => {
             const isSelected = potion.id === state.selectedPotionId;
@@ -1919,6 +1926,7 @@ function PotionRecipePanel(potion) {
     }
 
     panel.setAttribute("aria-label", `${potion.name} recipe`);
+    panel.classList.remove("recipe-panel-loading");
     stopBubbleAnimation();
     panel.replaceChildren(RecipeFlowDiagram(potion));
     startBubbleAnimation(getBubbleAnimationTargets(panel));
@@ -1926,6 +1934,7 @@ function PotionRecipePanel(potion) {
     applyPotionAccent(potion);
     syncPotionPageMetadata(potion);
     queueRecipeSlotFit();
+    panel.removeAttribute("aria-busy");
 }
 
 function RecipeHeader(potion) {
@@ -2262,7 +2271,7 @@ function createFlowSlot(nodeData, slotKey) {
     content.className = "flow-slot-content";
     content.setAttribute("data-slot-key", slotKey);
 
-    const node = createRecipeNode(nodeData);
+    const node = createRecipeNode(nodeData, { slotKey });
     content.append(node);
     shell.append(content);
     return shell;
@@ -2284,11 +2293,12 @@ function toPercentage(value, total) {
     return `${((value / total) * 100).toFixed(4)}%`;
 }
 
-function createRecipeNode(nodeData) {
+function createRecipeNode(nodeData, { slotKey = "" } = {}) {
     const node = document.createElement(nodeData?.linkedPotionId ? "a" : "article");
     node.className = `recipe-node${nodeData?.linkedPotionId ? " recipe-node-link" : ""}`;
     node.dataset.iconPath = nodeData?.icon || "";
-    const isIngredientNode = isIngredientIconPath(nodeData?.icon);
+    const isIngredientNode = slotKey === "top" || isIngredientIconPath(nodeData?.icon);
+    node.dataset.iconRole = isIngredientNode ? "ingredient" : "";
     const shouldPreserveLabelCase = isIngredientNode || nodeData?.name === "Awkward Potion";
     const slotOffsetY = getRecipeNodeSlotOffsetY(nodeData);
     if (slotOffsetY !== 0) {
@@ -2303,9 +2313,6 @@ function createRecipeNode(nodeData) {
 
     const iconShell = document.createElement("div");
     iconShell.className = "recipe-node-icon-shell";
-    if (isIngredientNode) {
-        iconShell.classList.add("has-ingredient-glow");
-    }
 
     if (nodeData?.icon) {
         const icon = createAssetImage(nodeData.icon, "recipe-node-icon", {
@@ -2669,7 +2676,7 @@ function fitRecipeSlotNode(node) {
     const gap = parseFloat(nodeStyles.rowGap || nodeStyles.gap) || 0;
     const lineHeight = parseFloat(labelStyles.lineHeight) || labelRect.height || 0;
     const lineCount = Math.max(1, Math.round(labelRect.height / Math.max(lineHeight, 1)));
-    const isIngredientNode = isIngredientIconPath(node.dataset.iconPath);
+    const isIngredientNode = node.dataset.iconRole === "ingredient" || isIngredientIconPath(node.dataset.iconPath);
     const effectiveLabelHeight = isIngredientNode
         ? measureMaxIngredientLabelHeight(label, slotRect.width)
         : labelRect.height;
@@ -2801,7 +2808,7 @@ function getSelectedPotion() {
     return POTION_RECIPES.find(potion => potion.id === state.selectedPotionId) || POTION_RECIPES[0];
 }
 
-async function selectPotion(nextPotionId, { updateHistory = true } = {}) {
+function selectPotion(nextPotionId, { updateHistory = true } = {}) {
     const normalizedNextPotionId = POTION_BY_ID.has(normalizePotionId(nextPotionId))
         ? normalizePotionId(nextPotionId)
         : DEFAULT_POTION_ID;
@@ -2819,22 +2826,14 @@ async function selectPotion(nextPotionId, { updateHistory = true } = {}) {
 
     const panel = document.getElementById("recipe-panel");
     const nextPotion = getPotionById(normalizedNextPotionId) || getSelectedPotion();
-    const renderRequestId = ++recipePanelRenderRequestId;
 
     if (panel) {
         panel.setAttribute("aria-busy", "true");
         panel.scrollTop = 0;
     }
 
-    await ensurePotionRenderAssets(nextPotion);
-
-    if (renderRequestId !== recipePanelRenderRequestId || state.selectedPotionId !== normalizedNextPotionId) {
-        return;
-    }
-
     PotionRecipePanel(nextPotion);
     syncPotionLinkTargets();
-    panel?.removeAttribute("aria-busy");
 }
 
 function syncPotionListSelection(previousPotionId, nextPotionId) {

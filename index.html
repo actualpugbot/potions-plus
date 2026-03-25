@@ -1,8 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-app-state="booting">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="color-scheme" content="dark light">
         <title>Minecraft Potion Recipes &amp; Brewing Guide | Potions Plus</title>
         <meta name="description" content="Browse searchable Minecraft potion recipes, brewing ingredients, splash upgrades, and linked potion chains for every major brew in one guide.">
         <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
@@ -19,9 +20,25 @@
         <meta name="twitter:title" content="Minecraft Potion Recipes &amp; Brewing Guide | Potions Plus">
         <meta name="twitter:description" content="Browse searchable Minecraft potion recipes, brewing ingredients, splash upgrades, and linked potion chains for every major brew in one guide.">
         <meta name="twitter:image" content="https://actualpugbot.github.io/potions-plus/recipes/Fire%20Resistance.png">
+        <script>
+            (function () {
+                const storageKey = "potion-guide-theme";
+                const root = document.documentElement;
+                try {
+                    if (window.localStorage.getItem(storageKey) === "light") {
+                        root.setAttribute("data-theme", "light");
+                    }
+                } catch (_error) {
+                    // Ignore storage access failures during boot.
+                }
+            }());
+        </script>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;600;700&family=Silkscreen:wght@400;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+        <link rel="preload" as="image" href="./ui_elements/UI_main.png" fetchpriority="high">
+        <link rel="preload" as="image" href="./ui_elements/bubbles_0.png" fetchpriority="high">
+        <link rel="preload" as="image" href="./ui_elements/arrow_0.png" fetchpriority="high">
         <link rel="icon" href="./favicon.ico" sizes="any">
         <link rel="stylesheet" href="./style.css">
         <script id="structured-data" type="application/ld+json">[]</script>
@@ -48,10 +65,36 @@
 
             <section class="app-layout">
                 <aside class="potion-sidebar" aria-label="Potion list">
-                    <div id="potion-list" class="potion-list"></div>
+                    <div id="potion-list" class="potion-list potion-list-loading" aria-hidden="true">
+                        <div class="potion-list-skeleton-item"></div>
+                        <div class="potion-list-skeleton-item"></div>
+                        <div class="potion-list-skeleton-item"></div>
+                        <div class="potion-list-skeleton-item"></div>
+                        <div class="potion-list-skeleton-item"></div>
+                        <div class="potion-list-skeleton-item"></div>
+                        <div class="potion-list-skeleton-item"></div>
+                        <div class="potion-list-skeleton-item"></div>
+                    </div>
                 </aside>
 
-                <section id="recipe-panel" class="recipe-panel" aria-live="polite"></section>
+                <section id="recipe-panel" class="recipe-panel recipe-panel-loading" aria-live="polite" aria-busy="true">
+                    <div class="recipe-loading-shell" aria-hidden="true">
+                        <div class="recipe-loading-header">
+                            <span class="recipe-loading-icon"></span>
+                            <div class="recipe-loading-copy">
+                                <span class="recipe-loading-kicker"></span>
+                                <span class="recipe-loading-title"></span>
+                            </div>
+                        </div>
+                        <div class="recipe-loading-art"></div>
+                        <div class="recipe-loading-steps">
+                            <span class="recipe-loading-step"></span>
+                            <span class="recipe-loading-step"></span>
+                            <span class="recipe-loading-step"></span>
+                        </div>
+                    </div>
+                    <p class="visually-hidden">Loading potion guide.</p>
+                </section>
             </section>
         </main>
     </body>
