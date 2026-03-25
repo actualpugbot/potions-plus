@@ -1947,6 +1947,10 @@ function RecipeHeader(potion) {
     const textWrap = document.createElement("div");
     textWrap.className = "recipe-title-block";
 
+    const prefix = document.createElement("p");
+    prefix.className = "recipe-title-prefix";
+    prefix.textContent = potion.id === "turtle-master" ? "Potion of the" : "Potion of";
+
     const title = document.createElement("h2");
     title.className = "recipe-title";
     title.textContent = potion.name;
@@ -1957,7 +1961,7 @@ function RecipeHeader(potion) {
 
     const duration = createRecipeDuration(potion);
 
-    textWrap.append(title);
+    textWrap.append(prefix, title);
     titleRow.append(iconShell, textWrap, spacer);
 
     header.append(titleRow);
