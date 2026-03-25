@@ -2036,17 +2036,32 @@ function RecipeFlowDiagram(potion) {
     const modifierLaneShell = document.createElement("div");
     modifierLaneShell.className = "modifier-lane-shell";
 
-    modifiers.forEach((modifier, index) => {
-        const modifierRow = RecipeModifierRow(modifier, getModifierOutcomeData(potion, modifier, flow));
-        setFlowDelay(modifierRow, 300 + (index * 90));
-        modifierLane.append(modifierRow);
+    for (let index = 0; index < modifiers.length; index += 1) {
+        const modifier = modifiers[index];
+        const nextModifier = modifiers[index + 1];
+        const flowDelay = 300 + (index * 90);
 
-        if (shouldRenderModifierChoiceSeparator(modifier, modifiers[index + 1])) {
-            const separator = createModifierChoiceSeparator();
-            setFlowDelay(separator, 345 + (index * 90));
-            modifierLane.append(separator);
+        if (shouldRenderModifierChoiceGroup(modifier, nextModifier)) {
+            const choiceGroup = createModifierChoiceGroup([
+                {
+                    modifier,
+                    outcome: getModifierOutcomeData(potion, modifier, flow),
+                },
+                {
+                    modifier: nextModifier,
+                    outcome: getModifierOutcomeData(potion, nextModifier, flow),
+                },
+            ]);
+            setFlowDelay(choiceGroup, flowDelay);
+            modifierLane.append(choiceGroup);
+            index += 1;
+            continue;
         }
-    });
+
+        const modifierRow = RecipeModifierRow(modifier, getModifierOutcomeData(potion, modifier, flow));
+        setFlowDelay(modifierRow, flowDelay);
+        modifierLane.append(modifierRow);
+    }
 
     if (modifiers.length === 0 && flow.finalPotion) {
         const finalPotionNode = createFinalPotionNode(flow.finalPotion);
@@ -2332,30 +2347,47 @@ function RecipeModifierRow(modifier, outcome = null) {
     return row;
 }
 
-function createModifierChoiceSeparator() {
-    const separator = document.createElement("div");
-    separator.className = "modifier-choice-separator";
-    separator.setAttribute("aria-hidden", "true");
+function createModifierChoiceGroup(options) {
+    const group = document.createElement("div");
+    group.className = "modifier-choice-group";
 
-    const main = document.createElement("div");
-    main.className = "modifier-choice-separator-main";
+    const rail = createModifierChoiceRail();
+    const body = document.createElement("div");
+    body.className = "modifier-choice-body";
 
-    const prefix = document.createElement("span");
-    prefix.className = "modifier-prefix modifier-choice-separator-prefix";
-    prefix.textContent = "+";
+    options.forEach(({ modifier, outcome }) => {
+        body.append(RecipeModifierRow(modifier, outcome));
+    });
 
-    const body = document.createElement("span");
-    body.className = "modifier-choice-separator-body";
+    group.append(rail, body);
+
+    return group;
+}
+
+function createModifierChoiceRail() {
+    const rail = document.createElement("div");
+    rail.className = "modifier-choice-rail";
+    rail.setAttribute("aria-hidden", "true");
+
+    const topSegment = document.createElement("span");
+    topSegment.className = "modifier-choice-rail-segment modifier-choice-rail-segment-top";
+
+    const bottomSegment = document.createElement("span");
+    bottomSegment.className = "modifier-choice-rail-segment modifier-choice-rail-segment-bottom";
+
+    const topBranch = document.createElement("span");
+    topBranch.className = "modifier-choice-rail-branch modifier-choice-rail-branch-top";
+
+    const bottomBranch = document.createElement("span");
+    bottomBranch.className = "modifier-choice-rail-branch modifier-choice-rail-branch-bottom";
 
     const word = document.createElement("span");
-    word.className = "modifier-choice-separator-word";
+    word.className = "modifier-choice-rail-word";
     word.textContent = "or";
 
-    body.append(word);
-    main.append(prefix, body);
-    separator.append(main);
+    rail.append(topSegment, bottomSegment, topBranch, bottomBranch, word);
 
-    return separator;
+    return rail;
 }
 
 function createModifierIngredientNode(modifier) {
@@ -2439,7 +2471,7 @@ function normalizeModifierLabel(label) {
     return (label || "").trim().toLowerCase();
 }
 
-function shouldRenderModifierChoiceSeparator(modifier, nextModifier) {
+function shouldRenderModifierChoiceGroup(modifier, nextModifier) {
     return isGlowstoneModifier(modifier) && isRedstoneModifier(nextModifier);
 }
 
