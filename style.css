@@ -1230,10 +1230,7 @@ html[data-theme="light"] .icon-fallback {
     --modifier-choice-rail-center-gap: clamp(1rem, 1.5vw, 1.16rem);
     --modifier-choice-rail-anchor-top: 25%;
     --modifier-choice-rail-anchor-bottom: 25%;
-    display: grid;
-    grid-template-columns: var(--modifier-choice-rail-width) minmax(0, 1fr);
-    align-items: stretch;
-    column-gap: clamp(0.1rem, 0.5vw, 0.24rem);
+    display: block;
     padding: 0.18rem 0;
     opacity: 0;
     animation: flow-rise 420ms cubic-bezier(0.22, 1, 0.36, 1) var(--flow-delay, 0ms) both;
@@ -1244,6 +1241,7 @@ html[data-theme="light"] .modifier-choice-group {
 }
 
 .modifier-choice-body {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: clamp(0.72rem, 1vw, 0.92rem);
@@ -1256,9 +1254,13 @@ html[data-theme="light"] .modifier-choice-group {
 }
 
 .modifier-choice-rail {
-    position: relative;
-    min-height: 100%;
+    position: absolute;
+    top: 0.18rem;
+    bottom: 0.18rem;
+    left: calc(-1 * var(--modifier-choice-rail-width));
+    width: var(--modifier-choice-rail-width);
     color: var(--modifier-choice-rail-line-color);
+    pointer-events: none;
 }
 
 .modifier-choice-rail-segment,
@@ -2049,7 +2051,6 @@ html[data-theme="light"] .layout-tuner-output {
         --modifier-choice-rail-line-x: clamp(0.92rem, 4vw, 1.08rem);
         --modifier-choice-rail-elbow-length: clamp(0.72rem, 3vw, 0.94rem);
         --modifier-choice-rail-center-gap: 0.92rem;
-        column-gap: 0.08rem;
     }
 
     .modifier-choice-body {
