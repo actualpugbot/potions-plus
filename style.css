@@ -626,7 +626,8 @@ html[data-theme="light"] .potion-list-item::after {
 .layout-tuner-toggle:focus-visible,
 .layout-tuner-btn:focus-visible,
 .recipe-node-link:focus-visible,
-.potion-inline-link:focus-visible {
+.potion-inline-link:focus-visible,
+.footer-vibe-link:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
 }
@@ -722,6 +723,37 @@ html[data-theme="light"] .recipe-panel::after {
 
 .recipe-panel-loading {
     min-height: clamp(34rem, 72vh, 48rem);
+}
+
+.footer {
+    position: fixed;
+    left: 50%;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 0.7rem);
+    transform: translateX(-50%);
+    z-index: 6;
+    width: auto;
+    max-width: calc(100% - 1.5rem);
+    padding: 0;
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7rem;
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+.footer-vibe-link,
+.footer-vibe-link:visited {
+    color: var(--muted);
+    text-decoration: none;
+    line-height: 1.15;
+    opacity: 0.78;
+    transition: opacity 0.2s ease;
+}
+
+.footer-vibe-link:hover,
+.footer-vibe-link:focus-visible {
+    opacity: 1;
 }
 
 .recipe-loading-shell {
@@ -2188,6 +2220,10 @@ html[data-theme="light"] .recipe-loading-step {
 
     .theme-toggle {
         align-self: flex-end;
+    }
+
+    .footer {
+        font-size: 0.74rem;
     }
 
     .potion-sidebar {
