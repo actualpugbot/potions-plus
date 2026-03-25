@@ -579,22 +579,6 @@ html[data-theme="light"] .potion-list-item {
     box-shadow: 0 10px 22px rgba(88, 118, 155, 0.12);
 }
 
-html[data-theme="light"] .potion-list-item::before {
-    content: "";
-    position: absolute;
-    top: 10px;
-    bottom: 10px;
-    left: 0.5rem;
-    width: 4px;
-    border-radius: 999px;
-    background: linear-gradient(180deg, rgb(var(--potion-row-accent-rgb) / 0.24) 0%, rgb(var(--potion-row-accent-rgb) / 0.8) 100%);
-    opacity: 0.42;
-    transform: scaleY(0.82);
-    transform-origin: center;
-    transition: opacity 0.22s ease, transform 0.22s ease;
-    z-index: 1;
-}
-
 html[data-theme="light"] .potion-list-item:hover {
     border-color: rgb(var(--potion-row-accent-rgb) / 0.38);
     background:
@@ -607,12 +591,6 @@ html[data-theme="light"] .potion-list-item.is-selected {
     background:
         linear-gradient(135deg, rgba(255, 255, 255, 0.99) 0%, rgb(var(--potion-row-accent-rgb) / 0.18) 56%, rgba(224, 236, 248, 0.94) 100%);
     box-shadow: 0 18px 30px rgba(60, 88, 123, 0.18), inset 0 0 0 1px rgb(var(--potion-row-accent-rgb) / 0.24);
-}
-
-html[data-theme="light"] .potion-list-item:hover::before,
-html[data-theme="light"] .potion-list-item.is-selected::before {
-    opacity: 1;
-    transform: scaleY(1);
 }
 
 html[data-theme="light"] .potion-list-item::after {
@@ -879,8 +857,17 @@ html[data-theme="light"] .recipe-panel::after {
 }
 
 html[data-theme="light"] .recipe-flow-diagram {
-    --ui-chrome-opacity: 0.76;
-    --ui-chrome-filter: brightness(1.2) contrast(1.07) saturate(1.02) drop-shadow(0 14px 22px rgba(72, 102, 141, 0.12));
+    --ui-chrome-opacity: 0.78;
+    --ui-chrome-ink: rgb(79 111 157 / 0.78);
+    --ui-chrome-filter:
+        invert(34%)
+        sepia(38%)
+        saturate(795%)
+        hue-rotate(188deg)
+        brightness(61%)
+        contrast(105%)
+        drop-shadow(0 12px 22px rgba(95, 126, 168, 0.14))
+        drop-shadow(0 0 1px rgba(24, 52, 83, 0.24));
 }
 
 .recipe-showcase {
@@ -1474,7 +1461,7 @@ html[data-theme="light"] .icon-fallback {
 }
 
 html[data-theme="light"] .modifier-choice-group {
-    --modifier-choice-rail-line-color: rgba(79, 111, 157, 0.78);
+    --modifier-choice-rail-line-color: var(--ui-chrome-ink, rgba(79, 111, 157, 0.78));
 }
 
 .modifier-choice-body {
@@ -1593,8 +1580,8 @@ html[data-theme="light"] .modifier-choice-group {
 }
 
 html[data-theme="light"] .modifier-prefix {
-    color: rgb(var(--potion-accent-rgb) / 0.88);
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.58);
+    color: var(--ui-chrome-ink, rgb(var(--potion-accent-rgb) / 0.88));
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.52);
 }
 
 .modifier-ingredient-node {
