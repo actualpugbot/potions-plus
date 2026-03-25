@@ -183,6 +183,69 @@ const ASSETS = {
         windCharging: "./potion_bottles/splash_potion_of_wind_charging.png",
         infestation: "./potion_bottles/splash_potion_of_infestation.png",
     },
+    uiElements: {
+        harm2: "./ui_elements/harm_2.png",
+        heal: "./ui_elements/heal.png",
+        heal2: "./ui_elements/heal_2.png",
+        poison: "./ui_elements/poison.png",
+    },
+};
+
+function createRecipeDurationTextDisplay(text) {
+    return {
+        ariaLabel: text,
+        segments: [{ type: "text", value: text }],
+    };
+}
+
+function createRecipeDurationIconDisplay(ariaLabel, segments) {
+    return { ariaLabel, segments };
+}
+
+function createRecipeDurationTextSegment(value) {
+    return { type: "text", value };
+}
+
+function createRecipeDurationIconSegment(path) {
+    return { type: "icon", path };
+}
+
+const POTION_DURATION_DISPLAYS = {
+    "fire-resistance": createRecipeDurationTextDisplay("3:00"),
+    harming: createRecipeDurationIconDisplay("-6 Health times 3", [
+        createRecipeDurationTextSegment("-6 Health "),
+        createRecipeDurationIconSegment(ASSETS.uiElements.harm2),
+        createRecipeDurationTextSegment(" x3"),
+    ]),
+    healing: createRecipeDurationIconDisplay("+4 Health times 2", [
+        createRecipeDurationTextSegment("+4 Health "),
+        createRecipeDurationIconSegment(ASSETS.uiElements.heal2),
+        createRecipeDurationTextSegment(" x2"),
+    ]),
+    infestation: createRecipeDurationTextDisplay("3:00"),
+    invisibility: createRecipeDurationTextDisplay("3:00"),
+    leaping: createRecipeDurationTextDisplay("+ 1/2 Jump, 3:00"),
+    "night-vision": createRecipeDurationTextDisplay("3:00"),
+    oozing: createRecipeDurationTextDisplay("3:00"),
+    poison: createRecipeDurationIconDisplay("Poison every 2.5 seconds, 0:45", [
+        createRecipeDurationTextSegment("- "),
+        createRecipeDurationIconSegment(ASSETS.uiElements.poison),
+        createRecipeDurationTextSegment("/ 2.5s, 0:45"),
+    ]),
+    regeneration: createRecipeDurationIconDisplay("Healing every 2.5 seconds, 0:45", [
+        createRecipeDurationTextSegment("+ "),
+        createRecipeDurationIconSegment(ASSETS.uiElements.heal),
+        createRecipeDurationTextSegment("/ 2.5s, 0:45"),
+    ]),
+    "slow-falling": createRecipeDurationTextDisplay("1:30"),
+    slowness: createRecipeDurationTextDisplay("-15% Speed, 1:30"),
+    strength: createRecipeDurationTextDisplay("+3 Attack, 3:00"),
+    swiftness: createRecipeDurationTextDisplay("+20% Speed, 3:00"),
+    "turtle-master": createRecipeDurationTextDisplay("Slowness IV and Resistance III, 0:20"),
+    "water-breathing": createRecipeDurationTextDisplay("3:00"),
+    weakness: createRecipeDurationTextDisplay("-4 Attack, 1:30"),
+    weaving: createRecipeDurationTextDisplay("3:00"),
+    "wind-charging": createRecipeDurationTextDisplay("3:00"),
 };
 
 const POTION_RECIPES = [
@@ -987,6 +1050,7 @@ function collectPotionAssetPaths(recipes) {
         addAssetPath(paths, potion.navIcon);
         addAssetPath(paths, potion.titleIcon);
         addAssetPath(paths, getPotionBottleAsset(potion));
+        getPotionDurationAssetPaths(potion).forEach((path) => addAssetPath(paths, path));
         addAssetPath(paths, potion.flow?.ingredient?.icon);
         addAssetPath(paths, potion.flow?.basePotion?.icon);
         addAssetPath(paths, potion.flow?.finalPotion?.icon);
@@ -1003,6 +1067,7 @@ function collectPotionRenderAssetPaths(potion) {
     UI_LAYOUT_ASSET_PATHS.forEach((path) => addAssetPath(paths, path));
     addAssetPath(paths, potion?.titleIcon);
     addAssetPath(paths, getPotionBottleAsset(potion));
+    getPotionDurationAssetPaths(potion).forEach((path) => addAssetPath(paths, path));
     addAssetPath(paths, potion?.flow?.ingredient?.icon);
     addAssetPath(paths, potion?.flow?.basePotion?.icon);
     addAssetPath(paths, potion?.flow?.finalPotion?.icon);
@@ -1379,9 +1444,7 @@ function RecipeHeader(potion) {
     spacer.className = "recipe-title-spacer";
     spacer.setAttribute("aria-hidden", "true");
 
-    const duration = document.createElement("p");
-    duration.className = "recipe-duration";
-    duration.textContent = formatPotionDurationLabel(potion.duration);
+    const duration = createRecipeDuration(potion);
 
     textWrap.append(prefix, title);
     titleRow.append(iconShell, textWrap, spacer);
@@ -1563,6 +1626,43 @@ function syncBubbleAnimationFrame(targets) {
 
 function shouldReduceBubbleMotion() {
     return typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function createRecipeDuration(potion) {
+    const duration = document.createElement("p");
+    duration.className = "recipe-duration";
+
+    const display = getPotionDurationDisplay(potion);
+    duration.setAttribute("aria-label", display.ariaLabel);
+
+    display.segments.forEach((segment) => {
+        if (segment?.type === "icon" && segment.path) {
+            duration.append(createAssetImage(segment.path, "recipe-duration-icon", {
+                decorative: true,
+                fetchPriority: "high",
+            }));
+            return;
+        }
+
+        duration.append(document.createTextNode(segment?.value || ""));
+    });
+
+    return duration;
+}
+
+function getPotionDurationDisplay(potion) {
+    return POTION_DURATION_DISPLAYS[potion?.id] || createRecipeDurationTextDisplay(formatPotionDurationLabel(potion?.duration));
+}
+
+function getPotionDurationAssetPaths(potion) {
+    const display = getPotionDurationDisplay(potion);
+    if (!Array.isArray(display?.segments)) {
+        return [];
+    }
+
+    return display.segments
+        .filter((segment) => segment?.type === "icon" && segment.path)
+        .map((segment) => segment.path);
 }
 
 function formatPotionDurationLabel(duration) {
