@@ -909,6 +909,7 @@ html[data-theme="light"] .recipe-flow-diagram {
     --recipe-title-gap: 1rem;
     --recipe-title-stack-gap: 0.04rem;
     --recipe-title-prefix-offset-y: 0.16rem;
+    --recipe-title-prefix-margin-bottom: -17px;
     --recipe-title-prefix-size: clamp(0.82rem, 0.3vw + 0.74rem, 0.98rem);
     --recipe-title-prefix-line-height: 1.1;
     position: relative;
@@ -1019,7 +1020,7 @@ html[data-theme="light"] .recipe-flow-diagram {
 
 .recipe-title-prefix {
     grid-area: prefix;
-    margin: 0;
+    margin: 0 0 var(--recipe-title-prefix-margin-bottom) 0;
     width: 100%;
     align-self: end;
     font-family: var(--font-ui);
@@ -1428,7 +1429,7 @@ html[data-theme="light"] .icon-fallback {
     flex-direction: column;
     align-items: flex-start;
     gap: 1.02rem;
-    padding: 0;
+    padding: 0 0 13px;
 }
 
 .modifier-lane::before {
@@ -2269,6 +2270,7 @@ html[data-theme="light"] .recipe-loading-step {
         --recipe-title-gap: 0.72rem;
         --recipe-title-stack-gap: 0.02rem;
         --recipe-title-prefix-offset-y: 0.12rem;
+        --recipe-title-prefix-margin-bottom: -12px;
         --recipe-title-prefix-size: clamp(0.72rem, 2.2vw, 0.86rem);
         padding: 0.2rem 0 0.3rem;
         row-gap: 0.24rem;
@@ -2323,7 +2325,6 @@ html[data-theme="light"] .recipe-loading-step {
 
     .modifier-lane {
         --modifier-ingredient-width: clamp(6.4rem, 24vw, 7.25rem);
-        padding-left: 0;
     }
 
     .recipe-modifier-row {
