@@ -363,7 +363,7 @@ html[data-theme="light"] .theme-toggle-thumb {
 }
 
 .theme-toggle:hover {
-    transform: translateY(-1px);
+    transform: none;
 }
 
 .theme-toggle:hover .theme-toggle-track {
@@ -932,6 +932,12 @@ html[data-theme="light"] .recipe-flow-diagram {
     background: transparent;
     box-shadow: none;
     animation: icon-shell-enter 420ms cubic-bezier(0.22, 1, 0.36, 1) 140ms both;
+}
+
+.recipe-title-icon-shell-trailing {
+    grid-area: spacer;
+    justify-self: start;
+    margin-left: 0.95rem;
 }
 
 .recipe-title-icon {
@@ -1695,7 +1701,7 @@ html[data-theme="light"] .modifier-prefix {
 /* Splash bottle art sits a touch left in the source PNGs, so nudge it for steadier visual spacing. */
 .modifier-result-icon.is-splash-potion-image,
 .final-potion-icon.is-splash-potion-image {
-    translate: 4px 0;
+    translate: 16px 0;
 }
 
 .final-potion-node {

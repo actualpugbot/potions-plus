@@ -527,6 +527,8 @@ const POTION_RECIPES = [
         duration: "0:20",
         navIcon: ASSETS.effects.turtleMaster,
         titleIcon: ASSETS.effects.turtleMaster,
+        titleTrailingIcon: ASSETS.effects.slowness,
+        titleTrailingIconAlt: "Slowness effect icon",
         flow: {
             ingredient: { name: "Turtle Shell", icon: ASSETS.ingredients.turtleShell },
             basePotion: { name: "Awkward Potion", icon: ASSETS.potions.waterBottle },
@@ -1535,6 +1537,7 @@ function collectPotionAssetPaths(recipes) {
     recipes.forEach((potion) => {
         addAssetPath(paths, potion.navIcon);
         addAssetPath(paths, potion.titleIcon);
+        addAssetPath(paths, potion.titleTrailingIcon);
         addAssetPath(paths, getPotionBottleAsset(potion));
         getPotionDurationAssetPaths(potion).forEach((path) => addAssetPath(paths, path));
         addAssetPath(paths, potion.flow?.ingredient?.icon);
@@ -1552,6 +1555,7 @@ function collectPotionRenderAssetPaths(potion) {
     const paths = new Set();
     UI_LAYOUT_ASSET_PATHS.forEach((path) => addAssetPath(paths, path));
     addAssetPath(paths, potion?.titleIcon);
+    addAssetPath(paths, potion?.titleTrailingIcon);
     addAssetPath(paths, getPotionBottleAsset(potion));
     getPotionDurationAssetPaths(potion).forEach((path) => addAssetPath(paths, path));
     addAssetPath(paths, potion?.flow?.ingredient?.icon);
@@ -1965,15 +1969,28 @@ function RecipeHeader(potion) {
 
     const prefix = document.createElement("p");
     prefix.className = "recipe-title-prefix";
-    prefix.textContent = potion.id === "turtle-master" ? "Potion of the" : "Potion of";
+    if (potion.id === "awkward-potion") {
+        prefix.textContent = "";
+    } else {
+        prefix.textContent = potion.id === "turtle-master" ? "Potion of the" : "Potion of";
+    }
 
     const title = document.createElement("h2");
     title.className = "recipe-title";
     title.textContent = potion.name;
 
     const spacer = document.createElement("div");
-    spacer.className = "recipe-title-spacer";
-    spacer.setAttribute("aria-hidden", "true");
+    if (potion.titleTrailingIcon) {
+        spacer.className = "recipe-title-icon-shell recipe-title-icon-shell-trailing";
+        const trailingIcon = createAssetImage(potion.titleTrailingIcon, "recipe-title-icon", {
+            alt: potion.titleTrailingIconAlt || `${potion.name} secondary effect icon`,
+            fetchPriority: "high",
+        });
+        spacer.append(trailingIcon);
+    } else {
+        spacer.className = "recipe-title-spacer";
+        spacer.setAttribute("aria-hidden", "true");
+    }
 
     const duration = createRecipeDuration(potion);
 
