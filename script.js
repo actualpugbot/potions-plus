@@ -71,6 +71,7 @@ const UI_MAIN_SLOT_GEOMETRY = {
 const RECIPE_SLOT_MIN_ICON_SIZE = 16;
 const RECIPE_SLOT_TARGET_VISIBLE_WIDTH_RATIO = 0.58;
 const RECIPE_SLOT_TARGET_VISIBLE_HEIGHT_RATIO = 0.78;
+const RECIPE_SLOT_DOUBLE_ICON_WIDTH_RATIO = 5 / 3;
 const UI_MAIN_ASSET_PATH = "./ui_elements/UI_main.png";
 const UI_BUBBLE_FRAME_PATHS = Array.from({ length: 9 }, (_unused, index) => `./ui_elements/bubbles_${index}.png`);
 const UI_ARROW_FRAME_PATHS = Array.from({ length: 9 }, (_unused, index) => `./ui_elements/arrow_${index}.png`);
@@ -279,7 +280,10 @@ const POTION_RECIPES = [
         titleIcon: ASSETS.effects.harming,
         flow: {
             ingredient: { name: "Fermented Spider Eye", icon: ASSETS.ingredients.fermentedSpiderEye },
-            basePotion: { name: "Potion of Healing", icon: ASSETS.potions.healing },
+            basePotions: [
+                { name: "Potion of Healing", icon: ASSETS.potions.healing },
+                { name: "Potion of Poison", icon: ASSETS.potions.poison },
+            ],
             modifiers: [
                 {
                     label: "Glowstone Dust",
@@ -390,7 +394,10 @@ const POTION_RECIPES = [
         titleIcon: ASSETS.effects.slowness,
         flow: {
             ingredient: { name: "Fermented Spider Eye", icon: ASSETS.ingredients.fermentedSpiderEye },
-            basePotion: { name: "Potion of Swiftness", icon: ASSETS.potions.swiftness },
+            basePotions: [
+                { name: "Potion of Swiftness", icon: ASSETS.potions.swiftness },
+                { name: "Potion of Leaping", icon: ASSETS.potions.leaping },
+            ],
             modifiers: [
                 { label: "Glowstone Dust", icon: ASSETS.ingredients.glowstoneDust, detail: "-60% Speed, 0:20" },
                 { label: "Redstone Dust", icon: ASSETS.ingredients.redstoneDust, detail: "+2:30 [4:00 total]" },
@@ -875,10 +882,10 @@ function createPotionHowToStructuredData(potion, canonicalUrl, description, imag
             },
         ],
         supply: [
-            {
+            ...getFlowBasePotionOptions(potion.flow).map((basePotion) => ({
                 "@type": "HowToSupply",
-                name: potion.flow?.basePotion?.name || "Base potion",
-            },
+                name: basePotion.name,
+            })),
             {
                 "@type": "HowToSupply",
                 name: potion.flow?.ingredient?.name || "Ingredient",
@@ -1124,11 +1131,11 @@ function createPotionTextLinkOrSpan(potionId, text, className = "potion-inline-l
 
 function createPotionRecipeSteps(potion) {
     const steps = [];
-    const basePotionId = resolvePotionReferenceId(potion.flow?.basePotion?.name);
+    const basePotionOptions = getFlowBasePotionOptions(potion.flow);
 
     const baseStep = document.createElement("li");
     baseStep.append("Place ");
-    baseStep.append(createPotionTextLinkOrSpan(basePotionId, potion.flow?.basePotion?.name || "the base potion"));
+    appendPotionOptionLinks(baseStep, basePotionOptions);
     baseStep.append(" in the brewing stand's bottom slot.");
     steps.push(baseStep);
 
@@ -1193,7 +1200,7 @@ function createPotionSummaryText(potion) {
         return "";
     }
 
-    const basePotionName = potion.flow?.basePotion?.name || "a base potion";
+    const basePotionName = formatBasePotionOptionNames(getFlowBasePotionOptions(potion.flow), { fallback: "a base potion" });
     const ingredientName = potion.flow?.ingredient?.name || "the main ingredient";
     const modifierSummary = getPotionModifierSummaryText(potion);
 
@@ -1531,7 +1538,7 @@ function collectPotionAssetPaths(recipes) {
         addAssetPath(paths, getPotionBottleAsset(potion));
         getPotionDurationAssetPaths(potion).forEach((path) => addAssetPath(paths, path));
         addAssetPath(paths, potion.flow?.ingredient?.icon);
-        addAssetPath(paths, potion.flow?.basePotion?.icon);
+        getFlowBasePotionOptions(potion.flow).forEach((basePotion) => addAssetPath(paths, basePotion.icon));
         addAssetPath(paths, potion.flow?.finalPotion?.icon);
         potion.flow?.modifiers?.forEach((modifier) => {
             addAssetPath(paths, modifier.icon);
@@ -1548,7 +1555,7 @@ function collectPotionRenderAssetPaths(potion) {
     addAssetPath(paths, getPotionBottleAsset(potion));
     getPotionDurationAssetPaths(potion).forEach((path) => addAssetPath(paths, path));
     addAssetPath(paths, potion?.flow?.ingredient?.icon);
-    addAssetPath(paths, potion?.flow?.basePotion?.icon);
+    getFlowBasePotionOptions(potion?.flow).forEach((basePotion) => addAssetPath(paths, basePotion.icon));
     addAssetPath(paths, potion?.flow?.finalPotion?.icon);
     potion?.flow?.modifiers?.forEach((modifier) => {
         addAssetPath(paths, modifier.icon);
@@ -2025,10 +2032,7 @@ function RecipeFlowDiagram(potion) {
     );
 
     const ingredientSlot = createFlowSlot(flow.ingredient, "top");
-    const baseSlot = createFlowSlot({
-        ...flow.basePotion,
-        linkedPotionId: resolvePotionReferenceId(flow.basePotion?.name),
-    }, "bottom");
+    const baseSlot = createFlowSlot(getBasePotionSlotNodeData(flow), "bottom");
     const ingredientNode = ingredientSlot.querySelector(".recipe-node");
     const baseNode = baseSlot.querySelector(".recipe-node");
     setFlowDelay(ingredientNode, 120);
@@ -2297,9 +2301,10 @@ function createRecipeNode(nodeData, { slotKey = "" } = {}) {
     const node = document.createElement(nodeData?.linkedPotionId ? "a" : "article");
     node.className = `recipe-node${nodeData?.linkedPotionId ? " recipe-node-link" : ""}`;
     node.dataset.iconPath = nodeData?.icon || "";
+    node.dataset.iconCount = String(Array.isArray(nodeData?.icons) && nodeData.icons.length > 0 ? nodeData.icons.length : 1);
     const isIngredientNode = slotKey === "top" || isIngredientIconPath(nodeData?.icon);
     node.dataset.iconRole = isIngredientNode ? "ingredient" : "";
-    const shouldPreserveLabelCase = isIngredientNode || nodeData?.name === "Awkward Potion";
+    const shouldPreserveLabelCase = isIngredientNode || nodeData?.name === "Awkward Potion" || Boolean(nodeData?.preserveLabelCase);
     const slotOffsetY = getRecipeNodeSlotOffsetY(nodeData);
     if (slotOffsetY !== 0) {
         node.style.setProperty("--recipe-node-offset-y", `${slotOffsetY}px`);
@@ -2314,7 +2319,10 @@ function createRecipeNode(nodeData, { slotKey = "" } = {}) {
     const iconShell = document.createElement("div");
     iconShell.className = "recipe-node-icon-shell";
 
-    if (nodeData?.icon) {
+    if (Array.isArray(nodeData?.icons) && nodeData.icons.length > 0) {
+        node.classList.add("recipe-node-multi-icon");
+        iconShell.append(createRecipeNodeIconStack(nodeData.icons, node));
+    } else if (nodeData?.icon) {
         const icon = createAssetImage(nodeData.icon, "recipe-node-icon", {
             alt: `${nodeData.name} icon`,
         });
@@ -2326,11 +2334,88 @@ function createRecipeNode(nodeData, { slotKey = "" } = {}) {
     const textWrap = document.createElement("div");
     const label = document.createElement("div");
     label.className = `recipe-node-label${shouldPreserveLabelCase ? " recipe-node-label-preserve-case" : ""}`;
-    label.textContent = nodeData?.name || "";
+    appendRecipeNodeLabelContent(label, nodeData);
     textWrap.append(label);
 
     node.append(iconShell, textWrap);
     return node;
+}
+
+function appendRecipeNodeLabelContent(label, nodeData) {
+    if (!label) {
+        return;
+    }
+
+    if (!Array.isArray(nodeData?.labelParts) || nodeData.labelParts.length === 0) {
+        label.textContent = nodeData?.label || nodeData?.name || "";
+        return;
+    }
+
+    nodeData.labelParts.forEach((part, index) => {
+        if (index > 0) {
+            const separator = document.createElement("span");
+            separator.className = "recipe-node-label-separator";
+            separator.textContent = " or ";
+            label.append(separator);
+        }
+
+        const option = document.createElement("span");
+        option.className = "recipe-node-label-option";
+        option.dataset.optionIndex = String(index + 1);
+        option.textContent = part;
+        label.append(option);
+    });
+}
+
+function createRecipeNodeIconStack(iconOptions, node) {
+    const stack = document.createElement("div");
+    stack.className = "recipe-node-icon-stack";
+
+    iconOptions.slice(0, 2).forEach((iconOption, index) => {
+        const item = document.createElement(iconOption?.linkedPotionId ? "a" : "span");
+        item.className = `recipe-node-icon-stack-item recipe-node-icon-stack-item-${index + 1}`;
+        item.dataset.optionIndex = String(index + 1);
+
+        bindRecipeNodeOptionHighlight(node, item, index + 1);
+
+        if (iconOption?.linkedPotionId) {
+            enhancePotionLink(item, iconOption.linkedPotionId, {
+                ariaLabel: `View the ${getPotionDisplayName(getPotionById(iconOption.linkedPotionId))} recipe`,
+            });
+        }
+
+        if (iconOption?.icon) {
+            item.append(createAssetImage(iconOption.icon, "recipe-node-icon", {
+                alt: `${iconOption.name || "Potion"} icon`,
+            }));
+        } else {
+            item.append(createIconFallback(iconOption?.name || "?"));
+        }
+
+        stack.append(item);
+    });
+
+    return stack;
+}
+
+function bindRecipeNodeOptionHighlight(node, item, optionIndex) {
+    if (!node || !item || !optionIndex) {
+        return;
+    }
+
+    const activate = () => {
+        node.dataset.activeOption = String(optionIndex);
+    };
+    const deactivate = () => {
+        if (node.dataset.activeOption === String(optionIndex)) {
+            delete node.dataset.activeOption;
+        }
+    };
+
+    item.addEventListener("mouseenter", activate);
+    item.addEventListener("mouseleave", deactivate);
+    item.addEventListener("focus", activate);
+    item.addEventListener("blur", deactivate);
 }
 
 function RecipeModifierRow(modifier, outcome = null) {
@@ -2677,15 +2762,16 @@ function fitRecipeSlotNode(node) {
     const lineHeight = parseFloat(labelStyles.lineHeight) || labelRect.height || 0;
     const lineCount = Math.max(1, Math.round(labelRect.height / Math.max(lineHeight, 1)));
     const isIngredientNode = node.dataset.iconRole === "ingredient" || isIngredientIconPath(node.dataset.iconPath);
+    const iconWidthRatio = getRecipeNodeIconWidthRatio(node);
     const effectiveLabelHeight = isIngredientNode
         ? measureMaxIngredientLabelHeight(label, slotRect.width)
         : labelRect.height;
     const availableIconBoxSize = Math.max(
         RECIPE_SLOT_MIN_ICON_SIZE,
-        Math.min(slotRect.width, slotRect.height - effectiveLabelHeight - gap)
+        Math.min(slotRect.width / iconWidthRatio, slotRect.height - effectiveLabelHeight - gap)
     );
     const targetVisibleSize = Math.min(
-        slotRect.width * RECIPE_SLOT_TARGET_VISIBLE_WIDTH_RATIO,
+        (slotRect.width * RECIPE_SLOT_TARGET_VISIBLE_WIDTH_RATIO) / iconWidthRatio,
         slotRect.height * RECIPE_SLOT_TARGET_VISIBLE_HEIGHT_RATIO
     );
     const visibleBoundsRatio = isIngredientNode ? ingredientSlotLargestVisibleBoundsRatio : 1;
@@ -2696,6 +2782,15 @@ function fitRecipeSlotNode(node) {
 
     node.dataset.labelLines = String(lineCount);
     node.style.setProperty("--recipe-node-icon-size", `${Math.floor(iconSize)}px`);
+}
+
+function getRecipeNodeIconWidthRatio(node) {
+    const iconCount = Number(node?.dataset?.iconCount || "1");
+    if (iconCount <= 1) {
+        return 1;
+    }
+
+    return RECIPE_SLOT_DOUBLE_ICON_WIDTH_RATIO;
 }
 
 function measureMaxIngredientLabelHeight(referenceLabel, maxWidth) {
@@ -2743,6 +2838,89 @@ function getIngredientLabelHeightCacheKey(referenceLabel, maxWidth) {
         styles.lineHeight,
         styles.textTransform,
     ].join("|");
+}
+
+function getFlowBasePotionOptions(flow) {
+    if (!flow) {
+        return [];
+    }
+
+    if (Array.isArray(flow.basePotions) && flow.basePotions.length > 0) {
+        return flow.basePotions.filter(Boolean);
+    }
+
+    if (flow.basePotion) {
+        return [flow.basePotion];
+    }
+
+    return [];
+}
+
+function formatBasePotionOptionNames(basePotionOptions, {
+    compact = false,
+    fallback = "the base potion",
+} = {}) {
+    const names = basePotionOptions
+        .map((basePotion) => compact ? getCompactPotionOptionName(basePotion?.name) : (basePotion?.name || ""))
+        .filter(Boolean);
+
+    if (names.length === 0) {
+        return fallback;
+    }
+
+    return names.join(" or ");
+}
+
+function getCompactPotionOptionName(name) {
+    if (typeof name !== "string") {
+        return "";
+    }
+
+    return name.replace(/^Potion of\s+/i, "").trim();
+}
+
+function appendPotionOptionLinks(container, basePotionOptions) {
+    const options = Array.isArray(basePotionOptions) ? basePotionOptions.filter(Boolean) : [];
+    if (options.length === 0) {
+        container.append("the base potion");
+        return;
+    }
+
+    options.forEach((basePotion, index) => {
+        if (index > 0) {
+            container.append(" or ");
+        }
+
+        container.append(createPotionTextLinkOrSpan(
+            resolvePotionReferenceId(basePotion?.name),
+            basePotion?.name || "the base potion"
+        ));
+    });
+}
+
+function getBasePotionSlotNodeData(flow) {
+    const basePotionOptions = getFlowBasePotionOptions(flow);
+    if (basePotionOptions.length <= 1) {
+        const [basePotion] = basePotionOptions;
+        return {
+            ...basePotion,
+            linkedPotionId: resolvePotionReferenceId(basePotion?.name),
+        };
+    }
+
+    return {
+        label: formatBasePotionOptionNames(basePotionOptions, {
+            compact: true,
+            fallback: "Base potion",
+        }),
+        labelParts: basePotionOptions.map((basePotion) => getCompactPotionOptionName(basePotion?.name)).filter(Boolean),
+        preserveLabelCase: true,
+        icons: basePotionOptions.map((basePotion) => ({
+            ...basePotion,
+            linkedPotionId: resolvePotionReferenceId(basePotion?.name),
+        })),
+        name: formatBasePotionOptionNames(basePotionOptions),
+    };
 }
 
 function getAssetVisibleBoundsRatio(path, image) {
