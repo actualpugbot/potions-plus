@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://actualpugbot.github.io/potions-plus/sitemap.xml
