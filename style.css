@@ -1245,11 +1245,7 @@ html[data-theme="light"] .flow-layout-bottle {
     color: inherit;
     cursor: pointer;
     text-decoration: none;
-    transition: translate 0.18s ease, filter 0.18s ease;
-}
-
-.flow-slot-bottom .recipe-node-link:not(.recipe-node-multi-icon):is(:hover, :focus-visible) {
-    translate: 0 calc(var(--recipe-node-offset-y, 0px) - 2px);
+    transition: filter 0.18s ease;
 }
 
 .recipe-node-link:is(:hover, :focus-visible) .recipe-node-label {
@@ -1266,7 +1262,7 @@ html[data-theme="light"] .flow-layout-bottle {
     display: grid;
     place-items: center;
     isolation: isolate;
-    transition: scale 0.18s ease;
+    transition: translate 0.18s ease, scale 0.18s ease;
 }
 
 .recipe-node-multi-icon .recipe-node-icon-shell {
@@ -1337,6 +1333,7 @@ a.recipe-node-icon-stack-item {
 }
 
 .flow-slot-bottom .recipe-node-link:not(.recipe-node-multi-icon):is(:hover, :focus-visible) .recipe-node-icon-shell {
+    translate: 0 -2px;
     scale: 1.04;
 }
 
