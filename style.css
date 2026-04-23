@@ -1245,10 +1245,14 @@ html[data-theme="light"] .flow-layout-bottle {
     color: inherit;
     cursor: pointer;
     text-decoration: none;
-    transition: transform 0.18s ease, filter 0.18s ease;
+    transition: translate 0.18s ease, filter 0.18s ease;
 }
 
-.recipe-node-link:hover .recipe-node-label {
+.flow-slot-bottom .recipe-node-link:not(.recipe-node-multi-icon):is(:hover, :focus-visible) {
+    translate: 0 calc(var(--recipe-node-offset-y, 0px) - 2px);
+}
+
+.recipe-node-link:is(:hover, :focus-visible) .recipe-node-label {
     color: rgb(var(--potion-accent-rgb) / 0.98);
 }
 
@@ -1262,6 +1266,7 @@ html[data-theme="light"] .flow-layout-bottle {
     display: grid;
     place-items: center;
     isolation: isolate;
+    transition: scale 0.18s ease;
 }
 
 .recipe-node-multi-icon .recipe-node-icon-shell {
@@ -1324,6 +1329,15 @@ a.recipe-node-icon-stack-item {
     height: var(--recipe-node-icon-size, var(--ui-slot-icon-size));
     object-fit: contain;
     filter: drop-shadow(0 10px 14px rgba(2, 6, 13, 0.16));
+    transition: transform 0.18s ease, filter 0.18s ease;
+}
+
+.flow-slot-bottom .recipe-node-link:not(.recipe-node-multi-icon):is(:hover, :focus-visible) .recipe-node-icon {
+    filter: drop-shadow(0 14px 20px rgb(var(--potion-accent-rgb) / 0.24));
+}
+
+.flow-slot-bottom .recipe-node-link:not(.recipe-node-multi-icon):is(:hover, :focus-visible) .recipe-node-icon-shell {
+    scale: 1.04;
 }
 
 .recipe-node-label {
