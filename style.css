@@ -92,6 +92,7 @@ html {
 html,
 body,
 .potion-sidebar,
+.potion-info-panel,
 .layout-tuner-panel {
     scrollbar-width: thin;
     scrollbar-color: var(--scrollbar-thumb) transparent;
@@ -100,6 +101,7 @@ body,
 html::-webkit-scrollbar,
 body::-webkit-scrollbar,
 .potion-sidebar::-webkit-scrollbar,
+.potion-info-panel::-webkit-scrollbar,
 .layout-tuner-panel::-webkit-scrollbar {
     width: 10px;
     height: 10px;
@@ -109,6 +111,7 @@ body::-webkit-scrollbar,
 html::-webkit-scrollbar-track,
 body::-webkit-scrollbar-track,
 .potion-sidebar::-webkit-scrollbar-track,
+.potion-info-panel::-webkit-scrollbar-track,
 .layout-tuner-panel::-webkit-scrollbar-track {
     background: transparent;
 }
@@ -116,6 +119,7 @@ body::-webkit-scrollbar-track,
 html::-webkit-scrollbar-thumb,
 body::-webkit-scrollbar-thumb,
 .potion-sidebar::-webkit-scrollbar-thumb,
+.potion-info-panel::-webkit-scrollbar-thumb,
 .layout-tuner-panel::-webkit-scrollbar-thumb {
     background-color: var(--scrollbar-thumb);
     border-radius: 999px;
@@ -375,7 +379,7 @@ html[data-theme="light"] .theme-toggle-thumb {
     flex: 1 1 auto;
     min-height: 0;
     display: grid;
-    grid-template-columns: minmax(290px, 360px) minmax(0, 1fr);
+    grid-template-columns: minmax(290px, 340px) minmax(0, 1fr) minmax(280px, 320px);
     gap: 1.3rem;
     align-items: start;
     overflow: visible;
@@ -422,6 +426,58 @@ html[data-theme="light"] .theme-toggle-thumb {
 .potion-sidebar::-webkit-scrollbar-thumb {
     background-color: rgb(var(--potion-accent-rgb) / 0.34);
     border-radius: 999px;
+}
+
+.potion-info-panel {
+    position: sticky;
+    top: var(--page-pad-top);
+    align-self: start;
+    min-height: 0;
+    max-height: calc(100vh - var(--page-pad-top) - var(--page-pad-bottom) - var(--page-section-gap) - var(--page-header-height-budget));
+    max-height: calc(100dvh - var(--page-pad-top) - var(--page-pad-bottom) - var(--page-section-gap) - var(--page-header-height-budget));
+    padding: 1.25rem 1.15rem 1.3rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 1px solid rgba(145, 181, 227, 0.18);
+    border-radius: 32px;
+    background: linear-gradient(150deg, rgba(15, 24, 37, 0.84) 0%, rgba(8, 13, 21, 0.9) 56%, rgba(11, 18, 28, 0.92) 100%);
+    box-shadow: 0 28px 56px rgba(2, 5, 12, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(16px);
+    isolation: isolate;
+}
+
+.potion-info-panel::before,
+.potion-info-panel::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.potion-info-panel::before {
+    content: none;
+}
+
+.potion-info-panel::after {
+    inset: 1px;
+    border-radius: inherit;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 30%);
+    z-index: 0;
+}
+
+.potion-info-panel > * {
+    position: relative;
+    z-index: 1;
+}
+
+html[data-theme="light"] .potion-info-panel {
+    border-color: rgba(95, 135, 191, 0.26);
+    background: linear-gradient(150deg, rgba(255, 255, 255, 0.84) 0%, rgba(244, 249, 255, 0.9) 56%, rgba(232, 241, 251, 0.94) 100%);
+    box-shadow: 0 26px 52px rgba(68, 96, 132, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.76);
+}
+
+html[data-theme="light"] .potion-info-panel::after {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0) 30%);
 }
 
 .potion-sidebar::before,
@@ -473,7 +529,11 @@ html[data-theme="light"] .theme-toggle-thumb {
 .recipe-loading-kicker,
 .recipe-loading-title,
 .recipe-loading-art,
-.recipe-loading-step {
+.recipe-loading-step,
+.potion-info-loading-badge,
+.potion-info-loading-icon,
+.potion-info-loading-line,
+.potion-info-loading-card {
     position: relative;
     overflow: hidden;
     border: 1px solid rgb(var(--potion-accent-rgb) / 0.14);
@@ -486,7 +546,11 @@ html[data-theme="light"] .theme-toggle-thumb {
 .recipe-loading-kicker::after,
 .recipe-loading-title::after,
 .recipe-loading-art::after,
-.recipe-loading-step::after {
+.recipe-loading-step::after,
+.potion-info-loading-badge::after,
+.potion-info-loading-icon::after,
+.potion-info-loading-line::after,
+.potion-info-loading-card::after {
     content: "";
     position: absolute;
     inset: 0;
@@ -703,6 +767,10 @@ html[data-theme="light"] .recipe-panel::after {
     min-height: clamp(34rem, 72vh, 48rem);
 }
 
+.potion-info-panel-loading {
+    min-height: clamp(22rem, 58vh, 32rem);
+}
+
 .footer {
     position: fixed;
     left: 50%;
@@ -798,6 +866,55 @@ html[data-theme="light"] .recipe-panel::after {
     width: 72%;
 }
 
+.potion-info-loading-shell {
+    display: grid;
+    gap: 1rem;
+}
+
+.potion-info-loading-badge {
+    width: 7.2rem;
+    height: 0.8rem;
+    border-radius: 999px;
+}
+
+.potion-info-loading-ingredient {
+    display: grid;
+    grid-template-columns: 62px minmax(0, 1fr);
+    gap: 0.85rem;
+    align-items: center;
+}
+
+.potion-info-loading-icon {
+    width: 62px;
+    height: 62px;
+    border-radius: 20px;
+}
+
+.potion-info-loading-copy {
+    display: grid;
+    gap: 0.56rem;
+}
+
+.potion-info-loading-line {
+    width: 100%;
+    height: 0.92rem;
+    border-radius: 999px;
+}
+
+.potion-info-loading-line-short {
+    width: 56%;
+}
+
+.potion-info-loading-card {
+    width: 100%;
+    min-height: 6.6rem;
+    border-radius: 22px;
+}
+
+.potion-info-loading-card-tall {
+    min-height: 8.8rem;
+}
+
 .potion-inline-link {
     color: rgb(var(--potion-accent-rgb) / 0.98);
     text-decoration: none;
@@ -884,6 +1001,58 @@ html[data-theme="light"] .recipe-flow-diagram {
     gap: 1.1rem;
     width: min(var(--ui-art-width), 100%);
     min-width: 0;
+}
+
+.potion-info-card {
+    display: grid;
+    gap: 0;
+}
+
+.potion-info-blurb {
+    padding: 0;
+    display: grid;
+    gap: 0.54rem;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+}
+
+.potion-info-blurb-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 0.92rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.potion-info-blurb-icon {
+    display: block;
+    width: 1.4rem;
+    height: 1.4rem;
+    flex: 0 0 auto;
+}
+
+.potion-info-blurb-body {
+    margin: 0;
+    color: color-mix(in srgb, var(--text) 88%, var(--muted) 12%);
+    font-size: clamp(1rem, 0.18vw + 0.96rem, 1.08rem);
+    line-height: 1.55;
+}
+
+.potion-info-blurb + .potion-info-blurb {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgb(var(--potion-accent-rgb) / 0.16);
+}
+
+html[data-theme="light"] .potion-info-blurb + .potion-info-blurb {
+    border-top-color: rgba(95, 135, 191, 0.22);
 }
 
 .recipe-header {
@@ -1971,7 +2140,11 @@ html[data-theme="light"] .recipe-loading-icon,
 html[data-theme="light"] .recipe-loading-kicker,
 html[data-theme="light"] .recipe-loading-title,
 html[data-theme="light"] .recipe-loading-art,
-html[data-theme="light"] .recipe-loading-step {
+html[data-theme="light"] .recipe-loading-step,
+html[data-theme="light"] .potion-info-loading-badge,
+html[data-theme="light"] .potion-info-loading-icon,
+html[data-theme="light"] .potion-info-loading-line,
+html[data-theme="light"] .potion-info-loading-card {
     border-color: rgba(95, 135, 191, 0.22);
     background:
         linear-gradient(135deg, rgb(var(--potion-accent-rgb) / 0.12) 0%, rgba(255, 255, 255, 0.95) 58%, rgba(231, 240, 249, 0.88) 100%);
@@ -2153,6 +2326,17 @@ html[data-theme="light"] .recipe-loading-step {
     .page-heading h1 {
         font-size: clamp(2rem, 4vw, 3.2rem);
     }
+
+    .app-layout {
+        grid-template-columns: minmax(270px, 320px) minmax(0, 1fr);
+    }
+
+    .potion-info-panel {
+        position: relative;
+        top: auto;
+        grid-column: 2;
+        max-height: none;
+    }
 }
 
 @media (max-width: 940px) {
@@ -2186,6 +2370,13 @@ html[data-theme="light"] .recipe-loading-step {
         max-height: none;
         min-height: 0;
         overflow: visible;
+    }
+
+    .potion-info-panel {
+        position: relative;
+        top: auto;
+        grid-column: auto;
+        max-height: none;
     }
 }
 
@@ -2250,8 +2441,17 @@ html[data-theme="light"] .recipe-loading-step {
         border-radius: 28px;
     }
 
+    .potion-info-panel {
+        padding: 1rem 0.95rem 1.1rem;
+        border-radius: 24px;
+    }
+
     .recipe-panel-loading {
         min-height: 28rem;
+    }
+
+    .potion-info-panel-loading {
+        min-height: 18rem;
     }
 
     .recipe-flow-diagram {
@@ -2294,13 +2494,21 @@ html[data-theme="light"] .recipe-loading-step {
         font-size: 1rem;
     }
 
+    .potion-info-blurb-title {
+        font-size: 0.84rem;
+    }
+
+    .potion-info-blurb-body {
+        font-size: 0.98rem;
+    }
+
     .recipe-loading-header {
         gap: 0.72rem;
     }
 
     .recipe-loading-icon {
-        width: 58px;
-        height: 58px;
+        width: 60px;
+        height: 60px;
     }
 
     .recipe-loading-kicker {

@@ -255,6 +255,49 @@ const POTION_DURATION_DISPLAYS = {
     "wind-charging": createInlineTextDisplay("3:00"),
 };
 
+const POTION_EFFECT_BLURBS = {
+    "awkward-potion": "This is the base brew that unlocks almost every advanced potion recipe in the game.",
+    "fire-resistance": "Lets you stand in fire and lava without taking burn damage.",
+    harming: "Deals instant damage the moment it hits or is consumed.",
+    healing: "Restores health instantly, making it the fastest panic-button heal.",
+    infestation: "Makes afflicted targets release silverfish when they take damage.",
+    invisibility: "Hides your character model, though armor and held items can still give you away.",
+    leaping: "Boosts jump height and trims down fall damage from shorter drops.",
+    "night-vision": "Brightens caves, oceans, and other dark places so you can see clearly.",
+    oozing: "Makes slain targets split into slimes while the effect is active.",
+    poison: "Ticks health down over time, but it will not deal the finishing blow.",
+    regeneration: "Gradually restores hearts over time, which is great between fights.",
+    "slow-falling": "Slows your descent and all but removes dangerous fall damage.",
+    slowness: "Cuts movement speed so targets are easier to catch or control.",
+    strength: "Boosts melee damage so swords and axes hit harder.",
+    swiftness: "Raises movement speed for faster travel, kiting, and escapes.",
+    "turtle-master": "Trades a massive resistance buff for a heavy slowness penalty.",
+    "water-breathing": "Prevents drowning so you can stay underwater for the full duration.",
+    weakness: "Reduces melee damage, which is especially useful when curing zombie villagers.",
+    weaving: "Makes affected mobs leave cobwebs behind when they die.",
+    "wind-charging": "Triggers a breeze-like wind burst when the affected mob dies.",
+};
+
+const PRIMARY_INGREDIENT_SOURCES = {
+    "Blaze Powder": "Craft it from blaze rods dropped by blazes in Nether fortresses.",
+    "Breeze Rod": "Dropped by breezes found inside Trial Chambers.",
+    Cobweb: "Mine it intact with shears or Silk Touch in places like abandoned mineshafts and spider spawners.",
+    "Fermented Spider Eye": "Craft it with a spider eye, sugar, and a brown mushroom.",
+    "Ghast Tear": "Farm ghasts in the Nether for drops.",
+    "Glistering Watermelon": "Craft it with a watermelon slice surrounded by gold nuggets.",
+    "Golden Carrot": "Craft it by surrounding a carrot with gold nuggets.",
+    "Magma Cream": "Craft it from a slimeball and blaze powder, or get it from magma cubes in the Nether.",
+    "Nether Wart": "Harvest it from Nether fortress stairwell gardens or bastion remnant courtyards.",
+    "Phantom Membrane": "Dropped by phantoms that spawn after several sleepless nights.",
+    Pufferfish: "Catch one while fishing or from pufferfish in warm and lukewarm oceans.",
+    "Rabbit's Foot": "A rare rabbit drop, easiest to farm in deserts or snowy biomes.",
+    "Slime Block": "Craft it from nine slimeballs collected from slimes.",
+    "Spider Eye": "Dropped by spiders and cave spiders, and sometimes by witches.",
+    Stone: "Mine it with Silk Touch or smelt cobblestone in a furnace.",
+    Sugar: "Craft it from sugar cane growing beside water.",
+    "Turtle Shell": "Craft it from five scutes dropped when baby turtles grow up.",
+};
+
 const POTION_RECIPES = [
     {
         id: "fire-resistance",
@@ -1114,6 +1157,7 @@ function PotionGuidePage() {
     const selectedPotion = getSelectedPotion();
     PotionSidebar();
     PotionRecipePanel(selectedPotion);
+    PotionInfoPanel(selectedPotion);
     syncPotionLinkTargets();
 }
 
@@ -1240,6 +1284,21 @@ function getPotionModifierSummaryText(potion) {
     });
 
     return summaryParts.join(". ") + ".";
+}
+
+function getPotionEffectBlurb(potion) {
+    if (!potion) {
+        return "";
+    }
+
+    return POTION_EFFECT_BLURBS[potion.id]
+        || `${getPotionDisplayName(potion)} gives you its signature effect for ${potion?.duration || "a short duration"}.`;
+}
+
+function getPrimaryIngredientSource(potion) {
+    const ingredientName = potion?.flow?.ingredient?.name || "main ingredient";
+    return PRIMARY_INGREDIENT_SOURCES[ingredientName]
+        || `Look for ${ingredientName} through its usual mob drop, structure loot, or crafting chain.`;
 }
 
 function getPotionById(potionId) {
@@ -1948,6 +2007,18 @@ function PotionRecipePanel(potion) {
     panel.removeAttribute("aria-busy");
 }
 
+function PotionInfoPanel(potion) {
+    const panel = document.getElementById("potion-info-panel");
+    if (!panel || !potion) {
+        return;
+    }
+
+    panel.setAttribute("aria-label", `${getPotionDisplayName(potion)} details`);
+    panel.classList.remove("potion-info-panel-loading");
+    panel.replaceChildren(PotionInfoCard(potion));
+    panel.removeAttribute("aria-busy");
+}
+
 function RecipeHeader(potion) {
     const header = document.createElement("header");
     header.className = "recipe-header";
@@ -2002,6 +2073,82 @@ function RecipeHeader(potion) {
         header.append(duration);
     }
     return header;
+}
+
+function PotionInfoCard(potion) {
+    const ingredientName = potion?.flow?.ingredient?.name || "Unknown ingredient";
+    const card = document.createElement("section");
+    card.className = "potion-info-card";
+
+    const sourceBlock = createPotionInfoBlurb(
+        `WHERE TO FIND ${ingredientName.toUpperCase()}`,
+        getPrimaryIngredientSource(potion),
+        "search"
+    );
+
+    const effectBlock = createPotionInfoBlurb("WHAT IT DOES", getPotionEffectBlurb(potion), "info");
+
+    card.append(effectBlock, sourceBlock);
+    return card;
+}
+
+function createPotionInfoBlurb(titleText, bodyText, iconType) {
+    const block = document.createElement("article");
+    block.className = "potion-info-blurb";
+
+    const title = document.createElement("h3");
+    title.className = "potion-info-blurb-title";
+
+    if (iconType) {
+        title.append(createPotionInfoBlurbIcon(iconType));
+    }
+
+    const titleLabel = document.createElement("span");
+    titleLabel.textContent = titleText;
+    title.append(titleLabel);
+
+    const body = document.createElement("p");
+    body.className = "potion-info-blurb-body";
+    body.textContent = bodyText;
+
+    block.append(title, body);
+    return block;
+}
+
+function createPotionInfoBlurbIcon(iconType) {
+    const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    icon.setAttribute("class", "potion-info-blurb-icon");
+    icon.setAttribute("viewBox", "0 0 20 20");
+    icon.setAttribute("aria-hidden", "true");
+    icon.setAttribute("focusable", "false");
+    icon.setAttribute("fill", "none");
+    icon.setAttribute("stroke", "currentColor");
+    icon.setAttribute("stroke-width", "1.8");
+    icon.setAttribute("stroke-linecap", "round");
+    icon.setAttribute("stroke-linejoin", "round");
+
+    if (iconType === "search") {
+        icon.append(
+            createSvgElement("circle", { cx: "8.5", cy: "8.5", r: "4.75" }),
+            createSvgElement("path", { d: "M12.2 12.2 16 16" })
+        );
+        return icon;
+    }
+
+    icon.append(
+        createSvgElement("circle", { cx: "10", cy: "10", r: "7.1" }),
+        createSvgElement("path", { d: "M10 8.4v4.7" }),
+        createSvgElement("circle", { cx: "10", cy: "5.9", r: "0.7", fill: "currentColor", stroke: "none" })
+    );
+    return icon;
+}
+
+function createSvgElement(tagName, attributes) {
+    const element = document.createElementNS("http://www.w3.org/2000/svg", tagName);
+    Object.entries(attributes).forEach(([name, value]) => {
+        element.setAttribute(name, value);
+    });
+    return element;
 }
 
 function RecipeFlowDiagram(potion) {
@@ -3020,14 +3167,20 @@ function selectPotion(nextPotionId, { updateHistory = true } = {}) {
     }
 
     const panel = document.getElementById("recipe-panel");
+    const infoPanel = document.getElementById("potion-info-panel");
     const nextPotion = getPotionById(normalizedNextPotionId) || getSelectedPotion();
 
     if (panel) {
         panel.setAttribute("aria-busy", "true");
         panel.scrollTop = 0;
     }
+    if (infoPanel) {
+        infoPanel.setAttribute("aria-busy", "true");
+        infoPanel.scrollTop = 0;
+    }
 
     PotionRecipePanel(nextPotion);
+    PotionInfoPanel(nextPotion);
     syncPotionLinkTargets();
 }
 
